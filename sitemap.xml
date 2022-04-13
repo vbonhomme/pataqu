@@ -16,10 +16,16 @@
     <loc>https://vbonhomme.github.io/pataqu/reference/animals.html</loc>
   </url>
   <url>
-    <loc>https://vbonhomme.github.io/pataqu/reference/hello.html</loc>
+    <loc>https://vbonhomme.github.io/pataqu/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://vbonhomme.github.io/pataqu/reference/index.html</loc>
+    <loc>https://vbonhomme.github.io/pataqu/reference/pataqu-package.html</loc>
+  </url>
+  <url>
+    <loc>https://vbonhomme.github.io/pataqu/reference/pipe.html</loc>
+  </url>
+  <url>
+    <loc>https://vbonhomme.github.io/pataqu/reference/shake.html</loc>
   </url>
   <url>
     <loc>https://vbonhomme.github.io/pataqu/reference/tidyeval.html</loc>
