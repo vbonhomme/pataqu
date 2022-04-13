@@ -1,0 +1,19 @@
+Package: pataqu
+Type: Package
+Title: Permutationnal Analysis of Terminus Ante and post QUem data
+Version: 0.1.0
+Authors@R: c(
+  person("Vincent", "Bonhomme", email = "bonhomme.vincent@gmail.com",
+    role = c("aut", "cre"), comment = c(ORCID = "0000-0002-2742-6349")),
+  person("Allowen", "Evin", 
+    role = c("aut"), comment = c(ORCID = "0000-0003-4515-1649")))
+Maintainer: Vincent Bonhomme <bonhomme.vincent@gmail.com>
+Description: pataqu uses permutationnal approach to deal with data that comes with 
+ uncertainties. It it typically aimed at working with temporal data that are not exactly defined
+ but comes with lower (and upper) bounds, also called terminus ante (and post) quem.
+License: AGPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
