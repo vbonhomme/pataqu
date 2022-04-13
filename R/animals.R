@@ -1,0 +1,19 @@
+#' Toy dataset of archaeological measurements
+#'
+#' This is a real but "anonymized" dataset of archaeological data.
+#'
+#' The original dataset aimed at measured the evolution of the `value` index,
+#' of four `taxa`, on remains recovered in `us` within `site` wand with datations
+#' provided as `tpq` and `taq`.
+#'
+#' @format A data frame with 5533 rows and 6 variables:
+#' \describe{
+#'   \item{taxa}{four species names (imaginary)}
+#'   \item{site}{64 site names}
+#'   \item{us}{1013 use, within these sites}
+#'   \item{tpq}{terminal post quem, ranging from -225 to 375}
+#'   \item{taq}{terminal ante quem, ranging from -175 to 700}
+#'   \item{value}{the parameter of interest measured}
+#' }
+#' @source provided and modified by the authors.
+"animals"
