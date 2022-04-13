@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/vbonhomme/pataqu/workflows/R-CMD-check/badge.svg)](https://github.com/vbonhomme/pataqu/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/vbonhomme/pataqu/branch/master/graph/badge.svg)](https://app.codecov.io/gh/vbonhomme/pataqu?branch=master)
 <!-- badges: end -->
 
 The goal of pataqu is to deal with uncertainties is temporal data.
