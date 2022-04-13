@@ -28,6 +28,9 @@ RoxygenNote: 7.1.2
 Imports: 
     dplyr,
     ggplot2,
+    magrittr,
     progress,
     purrr,
-    rlang (>= 0.4.11)
+    rlang (>= 0.4.11),
+    stats
+Roxygen: list(markdown = TRUE)
