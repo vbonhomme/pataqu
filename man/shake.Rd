@@ -38,7 +38,7 @@ uncertainties you have
 
 \examples{
 
-animals \%>\% shake_uniform(taq, tpq)
+animals \%>\% shake_uniform(tpq, taq)
 
 animals \%>\% dplyr::mutate(mean=0, sd=50) \%>\% shake_gaussian(mean, sd)
 
