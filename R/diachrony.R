@@ -6,17 +6,15 @@
 #'
 #' @param df [data.frame()] to work on
 #' @param tpq,taq colname to use for tpq and taq (when shaking_gaussian)
-#' @param mean,sd colname to use for mean and sd (when shaking_uniform)
+# #' @param mean,sd colname to use for mean and sd (when shaking_uniform)
 #' @param y colname to use for the value of interest
 #'
 #' @examples
 #' # let's say animals had different names
-#' x <- animals %>% dplyr::rename(ante=taq, post=tpq, lsi=value)
+#' x <- animals %>% dplyr::rename(post=tpq, ante=taq, lsi=value)
 #' x
-#' x %>% diachrony_uniform(ante, post, lsi)
-#' @name prepare
-
-
+#' x %>% diachrony_uniform(post, ante, lsi)
+#' @export
 diachrony_uniform <- function(df, tpq, taq, y){
   # all arguments must be present
   if (missing(df))
