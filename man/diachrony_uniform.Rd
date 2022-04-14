@@ -2,7 +2,7 @@
 % Please edit documentation in R/diachrony.R
 \name{diachrony_uniform}
 \alias{diachrony_uniform}
-\title{Prepare a data.frame for permutations}
+\title{Use permutations to compare diachronic variations}
 \usage{
 diachrony_uniform(df, tpq, taq, y, group, k = 10, x_prediction = 30)
 }
@@ -20,9 +20,7 @@ diachrony_uniform(df, tpq, taq, y, group, k = 10, x_prediction = 30)
 \item{x_prediction}{on which to predict new values. See Details.}
 }
 \description{
-This allows to ease and fasten permutations because the raw data is
-\code{prepare}d once for all. This is a thin wrapper around \code{\link[dplyr:rename]{dplyr::rename()}} that
-also checks conditions before permutations.
+More details here.
 }
 \details{
 If \code{x_prediction} can be passed as a single numeric or as

@@ -1,8 +1,6 @@
-#' Prepare a data.frame for permutations
+#' Use permutations to compare diachronic variations
 #'
-#' This allows to ease and fasten permutations because the raw data is
-#' `prepare`d once for all. This is a thin wrapper around [dplyr::rename()] that
-#' also checks conditions before permutations.
+#' More details here.
 #'
 #' @param df [data.frame()] to work on
 #' @param tpq,taq colname to use for tpq and taq (when shaking_gaussian)
