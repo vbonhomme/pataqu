@@ -17,3 +17,21 @@ test_that("prepare diachrony works", {
   expect_error(expect_message(pb %>% diachrony_uniform(tpq, taq, value), "tpq.*posterior 8, 9"))
 })
 
+test_that("diachrony returns groups or not but tibbles", {
+  mini_an <- animals %>% dplyr::group_by(taxa) %>%
+    dplyr::sample_n(10) %>%
+    dplyr::ungroup()
+  x1 <- mini_an %>% diachrony_uniform(tpq, taq, value, k=10)
+  expect_s3_class(x1, 'tbl_df')
+  expect_false("group" %in% colnames(x1))
+  expect_equal(sort(unique(x1$k)), 1:10)
+
+  x1 <- mini_an %>% diachrony_uniform(tpq, taq, value, group=taxa, k=2,
+                                      x_prediction=10)
+  expect_s3_class(x1, 'tbl_df')
+  expect_true("group" %in% colnames(x1))
+  expect_equal(sort(unique(x1$k)), 1:2)
+  expect_equal(length(unique(x1$x_new)), 10)
+
+})
+
