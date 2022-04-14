@@ -53,7 +53,7 @@
 #' # this returns factors
 #' p_breaks
 #' # and their natural graphical output is a boxplot
-#' p_breaks %>% plot()
+#' p_breaks %>% boxplot(y~x_new, data=.)
 #'
 #' # but this one returns midpoint as a numeric
 #' p_midpoint <- predictor_bins_midpoint(df, x_pred)
