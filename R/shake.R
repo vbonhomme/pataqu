@@ -1,45 +1,40 @@
 #' Generate new x values
 #'
-#' Used for each permutation to generate new x values.
+#' Used internally for each permutation to generate new x values.
 #' Different shakers are available depending on the type of
-#' uncertainties you have
+#' uncertainties you have.
 #'
-#' @param x [tibble()]
-#' @param min_col colname to use for taq
-#' @param max_col colname to use for tpq
-#' @param mean_col colname to use for mean
-#' @param sd_col colname to use for sd
-#'
+#' @param x [tibble()] typically obtained with [prepare()]
 #' @return a 'shaked'  [tibble()]
 #'
+#' @details expects `tpq`, `taq` colnames for `shake_uniform`,
+#' and `mean`, `sd` for `shake_gaussian`
+#'
 #' @examples
-#'
-#' animals %>% shake_uniform(tpq, taq)
-#'
-#' animals %>% dplyr::mutate(mean=0, sd=50) %>% shake_gaussian(mean, sd)
+#' set.seed(2329) # replicability
+#' tibble::tibble(tpq=c(-50, 100), taq=c(50, 200)) %>% shake_uniform()
+#' tibble::tibble(mean=c(0, 100), sd=c(5, 20)) %>% shake_gaussian()
 #'
 #' @name shake
 NULL
 
 #' @describeIn shake uniform distribution
 #' @export
-shake_uniform <- function(x, min_col, max_col){
+shake_uniform <- function(x){
   x %>%
     dplyr::rowwise() %>%
-    dplyr::mutate(x_new=stats::runif(n=1,
-                                     min=!!enquo(min_col),
-                                     max=!!enquo(max_col))) %>%
+    dplyr::mutate(x_new=stats::runif(n=1, min=tpq, max=taq)) %>%
     dplyr::ungroup()
 }
 
 #' @describeIn shake gaussian distribution
 #' @export
-shake_gaussian <- function(x, mean_col, sd_col){
+shake_gaussian <- function(x){
   x %>%
     dplyr::rowwise() %>%
     dplyr::mutate(x_new=stats::rnorm(n=1,
-                                     mean=!!enquo(mean_col),
-                                     sd=!!enquo(sd_col))) %>%
+                                     mean=mean,
+                                     sd=sd)) %>%
     dplyr::ungroup()
 }
 

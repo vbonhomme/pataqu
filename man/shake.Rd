@@ -6,28 +6,24 @@
 \alias{shake_gaussian}
 \title{Generate new x values}
 \usage{
-shake_uniform(x, min_col, max_col)
+shake_uniform(x)
 
-shake_gaussian(x, mean_col, sd_col)
+shake_gaussian(x)
 }
 \arguments{
-\item{x}{\code{\link[=tibble]{tibble()}}}
-
-\item{min_col}{colname to use for taq}
-
-\item{max_col}{colname to use for tpq}
-
-\item{mean_col}{colname to use for mean}
-
-\item{sd_col}{colname to use for sd}
+\item{x}{\code{\link[=tibble]{tibble()}} typically obtained with \code{\link[=prepare]{prepare()}}}
 }
 \value{
 a 'shaked'  \code{\link[=tibble]{tibble()}}
 }
 \description{
-Used for each permutation to generate new x values.
+Used internally for each permutation to generate new x values.
 Different shakers are available depending on the type of
-uncertainties you have
+uncertainties you have.
+}
+\details{
+expects \code{tpq}, \code{taq} colnames for \code{shake_uniform},
+and \code{mean}, \code{sd} for \code{shake_gaussian}
 }
 \section{Functions}{
 \itemize{
@@ -37,9 +33,8 @@ uncertainties you have
 }}
 
 \examples{
-
-animals \%>\% shake_uniform(tpq, taq)
-
-animals \%>\% dplyr::mutate(mean=0, sd=50) \%>\% shake_gaussian(mean, sd)
+set.seed(2329) # replicability
+tibble::tibble(tpq=c(-50, 100), taq=c(50, 200)) \%>\% shake_uniform()
+tibble::tibble(mean=c(0, 100), sd=c(5, 20)) \%>\% shake_gaussian()
 
 }
