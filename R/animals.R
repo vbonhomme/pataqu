@@ -19,7 +19,7 @@
 
 #' Animals with 100 permutations
 #'
-#' See [animal]. This is obtained with:
+#' See [animals]. This is obtained with:
 #' ```
 #' set.seed(2329)
 #' animals100 <-  diachrony_uniform(animals, tpq, taq, value, k=100, group=taxa)

@@ -11,7 +11,7 @@ An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) w
 animals100
 }
 \description{
-See \link{animal}. This is obtained with:\preformatted{set.seed(2329)
+See \link{animals}. This is obtained with:\preformatted{set.seed(2329)
 animals100 <-  diachrony_uniform(animals, tpq, taq, value, k=100, group=taxa)
 }
 }
