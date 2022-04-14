@@ -4,25 +4,27 @@
 \alias{spaghetti}
 \title{Spaghetti plot after permutations}
 \usage{
-spaghetti(x)
+spaghetti(x, ...)
 }
 \arguments{
 \item{x}{the result of a permutation function}
+
+\item{...}{additional parameters to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}}
 }
 \description{
 ggplot2 primer for displaying the results of permutations
 }
 \examples{
-x_loess <- animals \%>\%
-  diachrony_uniform(tpq, taq, value, k=5,
-  group=taxa, predictor_fun=predictor_loess)
+animals100 \%>\%
+spaghetti()
 
-spaghetti(x_loess)
-
-# with a lm now
-x_lm <- animals \%>\%
-  diachrony_uniform(tpq, taq, value, k=5,
-  group=taxa, predictor_fun=predictor_lm)
-
-spaghetti(x_lm)
+# you can easily customize it
+# color palette from https://www.colourlovers.com/palette/1473/Ocean_Five
+colors <- c("bird"="#00A0B0","cat"="#CC333F", "frog"="#CBE86B", "mouse"="#EDC951")
+library(ggplot2)
+animals100 \%>\%
+spaghetti(alpha=0.5, size=0.1) +
+  scale_color_manual(values=colors) +
+  xlab("year") + ylab("value of interest") +
+  guides(colour=guide_legend("taxa", override.aes=list(alpha=1, size=2)))
 }
