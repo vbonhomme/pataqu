@@ -27,9 +27,13 @@ Most of these functions are thin wrappers around built-in  predictors such as
 
 These predictors follow these steps:
 \enumerate{
-\item fit the \code{y} (value of interest) using the (shaked) \code{x}
-\item predict new \code{y} values on a range of \code{x}.
+\item fit the \code{y} (value of interest) using the (typically shaked) \code{x}. We thus obtain
+a continuous model that we use to:
+\item predict new \code{y} values on a range of \code{x}. These \code{x} values are typically fixed, so that
+we can later obtain confidence intervals, etc. for each of these points.
 }
+
+They thus aim at summarising new \code{y} values at fixed \code{x} values, using
 
 \code{predict_bin} makes no intermediate
 adjustment and summarises raw value either using mean or median (see Examples)
