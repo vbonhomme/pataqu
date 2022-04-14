@@ -51,7 +51,15 @@ but they may be of interest for custom constructions. See Details.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">predictor_loess</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_prediction</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">predictor_loess</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_prediction</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="fu">predictor_gam</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_prediction</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="fu">predictor_lm</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_prediction</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="fu">predictor_bins_breaks</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_prediction</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="fu">predictor_bins_midpoint</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_prediction</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -80,7 +88,11 @@ adjustment and summarises raw value either using mean or median (see Examples)</
     <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
     
-<ul><li><p><code>predictor_loess</code>: predict using loess</p></li>
+<ul><li><p><code>predictor_loess</code>: predict using <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">stats::loess()</a></code></p></li>
+<li><p><code>predictor_gam</code>: predict using <a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam</a></p></li>
+<li><p><code>predictor_lm</code>: predict using <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">stats::lm()</a></code></p></li>
+<li><p><code>predictor_bins_breaks</code>: no fit, just <code><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut()</a></code> and returns slices as factor</p></li>
+<li><p><code>predictor_bins_midpoint</code>: no fit, just <code><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut()</a></code> and returns slices as numeric</p></li>
 </ul></div>
 
     <div class="section level2">
@@ -91,13 +103,137 @@ adjustment and summarises raw value either using mean or median (see Examples)</
 <span class="r-in"><span class="va">x_pred</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span></span>
 <span class="r-in"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x_new<span class="op">=</span><span class="va">x_pred</span>, y<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="va">x_pred</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">x_pred</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span></span>
-<span class="r-in"><span class="va">pred_075</span> <span class="op">&lt;-</span> <span class="fu">predictor_loess</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_pred</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pred_05</span> <span class="op">&lt;-</span> <span class="fu">predictor_loess</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_pred</span>, span<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">p_loess</span>  <span class="op">&lt;-</span> <span class="fu">predictor_loess</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_pred</span><span class="op">)</span> <span class="co"># default span, ie 0.75</span></span>
+<span class="r-in"><span class="va">p_loess2</span> <span class="op">&lt;-</span> <span class="fu">predictor_loess</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_pred</span>, span<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span> <span class="co"># custom span</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># or using gam instead</span></span>
+<span class="r-in"><span class="va">p_gam</span> <span class="op">&lt;-</span> <span class="fu">predictor_gam</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_pred</span><span class="op">)</span></span>
+<span class="r-in"><span class="co"># or lm</span></span>
+<span class="r-in"><span class="va">p_lm</span>  <span class="op">&lt;-</span> <span class="fu">predictor_lm</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_pred</span><span class="op">)</span></span>
+<span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">x_new</span>, <span class="va">df</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">pred_075</span><span class="op">$</span><span class="va">x_new</span>, <span class="va">pred_075</span><span class="op">$</span><span class="va">y</span>, col<span class="op">=</span><span class="st">"red"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">pred_05</span><span class="op">$</span><span class="va">x_new</span>, <span class="va">pred_05</span><span class="op">$</span><span class="va">y</span>, col<span class="op">=</span><span class="st">"blue"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">p_loess</span><span class="op">$</span><span class="va">x_new</span>, <span class="va">p_loess</span><span class="op">$</span><span class="va">y</span>, col<span class="op">=</span><span class="st">"firebrick3"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">p_loess2</span><span class="op">$</span><span class="va">x_new</span>, <span class="va">p_loess2</span><span class="op">$</span><span class="va">y</span>, col<span class="op">=</span><span class="st">"orange"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">p_gam</span><span class="op">$</span><span class="va">x_new</span>, <span class="va">p_gam</span><span class="op">$</span><span class="va">y</span>, col<span class="op">=</span><span class="st">"blue"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">p_lm</span><span class="op">$</span><span class="va">x_new</span>, <span class="va">p_lm</span><span class="op">$</span><span class="va">y</span>, col<span class="op">=</span><span class="st">"forestgreen"</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="predictor-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
+<span class="r-in"><span class="co">### bins</span></span>
+<span class="r-in"><span class="co"># when using bins the output depends of the function</span></span>
+<span class="r-in"><span class="va">p_breaks</span> <span class="op">&lt;-</span> <span class="fu">predictor_bins_breaks</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_pred</span><span class="op">)</span></span>
+<span class="r-in"><span class="co"># this returns factors</span></span>
+<span class="r-in"><span class="va">p_breaks</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        x_new           y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      [1,2]  0.35341687</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      [1,2] -0.87818619</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      (2,3]  0.89519883</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      (3,4]  0.09414381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      (4,5] -0.90204424</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      (5,6]  0.48169961</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7      (6,7]  0.16957463</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8      (7,8]  0.35190793</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9      (8,9] -0.75168929</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10    (9,10]  0.82023581</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   (10,11] -0.60505632</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   (11,12]  0.07806676</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13   (12,13] -0.63127791</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14   (13,14]  0.12362357</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15   (14,15]  0.69824234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16   (15,16] -0.22600968</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17   (16,17]  0.61369767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18   (17,18] -0.01451321</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19   (18,19]  0.06450122</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20   (19,20]  0.95209575</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21   (20,21]  0.90973407</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22   (21,22]  0.04698405</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23   (22,23] -0.61838939</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24   (23,24]  1.14478945</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25   (24,25] -0.33906626</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26   (25,26] -0.64589837</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27   (26,27] -0.63221046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28   (27,28]  0.75104089</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29   (28,29]  1.04381285</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30   (29,30]  1.13068856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31   (30,31] -0.53458649</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32   (31,32] -0.10577192</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33   (32,33]  1.13443241</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34   (33,34] -0.58439354</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35   (34,35]  0.42142479</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36   (35,36]  0.19553367</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37   (36,37]  1.19256740</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38   (37,38]  0.86403503</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39   (38,39] -0.28772797</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40   (39,40]  0.82227857</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41   (40,41]  0.69172729</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42   (41,42]  1.38252133</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43   (42,43]  0.15397780</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44   (43,44]  0.95055373</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45   (44,45]  0.60263713</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46   (45,46]  0.07154191</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47   (46,47]  1.02600869</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48   (47,48]  0.46936287</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49   (48,49]  0.29828659</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50   (49,50]  0.60678142</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51   (50,51]  0.45368359</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52   (51,52]  0.15363081</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53   (52,53]  0.41929507</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54   (53,54] -0.31035475</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55   (54,55]  1.29930989</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56   (55,56]  0.22424582</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57   (56,57]  1.37397923</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58   (57,58]  1.35309634</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59   (58,59]  0.83016556</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60   (59,60]  1.55016116</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61   (60,61]  0.11249589</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62   (61,62]  0.39795404</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63   (62,63]  0.95313154</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64   (63,64]  1.17256178</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65   (64,65] -0.21413562</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66   (65,66]  1.31028964</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67   (66,67]  1.50405711</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68   (67,68]  1.60932010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69   (68,69]  0.03011264</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70   (69,70]  1.42552953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71   (70,71]  0.73364417</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72   (71,72]  1.12406057</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73   (72,73]  0.98104225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74   (73,74]  1.62332878</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75   (74,75]  1.65553579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76   (75,76]  1.42929016</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77   (76,77]  1.34033677</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78   (77,78]  0.80341918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79   (78,79]  0.22164150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80   (79,80]  0.71178300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81   (80,81]  0.65342478</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82   (81,82] -0.13640990</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83   (82,83]  1.33299006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84   (83,84]  1.70563719</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85   (84,85]  0.94836022</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86   (85,86]  1.34979459</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87   (86,87]  0.71911164</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88   (87,88]  0.26455080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89   (88,89]  0.94354067</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90   (89,90]  1.74850498</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91   (90,91]  1.46870781</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92   (91,92]  0.09610908</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93   (92,93]  1.01493933</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94   (93,94]  0.41452147</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95   (94,95]  0.29843927</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96   (95,96]  1.55234023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97   (96,97]  1.52267705</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98   (97,98]  0.44941425</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99   (98,99]  1.21174733</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100 (99,100]  0.39443985</span>
+<span class="r-in"><span class="co"># and their natural graphical output is a boxplot</span></span>
+<span class="r-in"><span class="va">p_breaks</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-plt img"><img src="predictor-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># but this one returns midpoint as a numeric</span></span>
+<span class="r-in"><span class="va">p_midpoint</span> <span class="op">&lt;-</span> <span class="fu">predictor_bins_midpoint</span><span class="op">(</span><span class="va">df</span>, <span class="va">x_pred</span><span class="op">)</span></span>
+<span class="r-in"><span class="co"># and the binning is quite clear here</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">x_new</span>, <span class="va">df</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">p_midpoint</span><span class="op">$</span><span class="va">x_new</span>, <span class="va">p_midpoint</span><span class="op">$</span><span class="va">y</span>, col<span class="op">=</span><span class="st">"blue"</span>, pch<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span>
+<span class="r-plt img"><img src="predictor-3.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
