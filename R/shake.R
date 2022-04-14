@@ -4,7 +4,7 @@
 #' Different shakers are available depending on the type of
 #' uncertainties you have.
 #'
-#' @param x [tibble()] typically obtained with [prepare()]
+#' @param x [tibble()] typically obtained by permutations
 #' @return a 'shaked'  [tibble()]
 #'
 #' @details expects `tpq`, `taq` colnames for `shake_uniform`,

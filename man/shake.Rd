@@ -11,7 +11,7 @@ shake_uniform(x)
 shake_gaussian(x)
 }
 \arguments{
-\item{x}{\code{\link[=tibble]{tibble()}} typically obtained with \code{\link[=prepare]{prepare()}}}
+\item{x}{\code{\link[=tibble]{tibble()}} typically obtained by permutations}
 }
 \value{
 a 'shaked'  \code{\link[=tibble]{tibble()}}
