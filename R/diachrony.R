@@ -7,8 +7,10 @@
 # #' @param mean,sd colname to use for mean and sd (when shaking_uniform)
 #' @param y colname to use for the value of interest
 #' @param k number of permutations (10 by default)
+#' @param predictor_fun function one of [predictor]
 #' @param x_prediction on which to predict new values. See Details.
 #' @param group colname (optionnal) whether you have groups
+#' @param ... additional arguments to `predictor_fun`
 #'
 #' @details If `x_prediction` can be passed as a single numeric or as
 #' a vector of numeric. If a single numeric is passed, a regular sequence of this length
@@ -37,7 +39,9 @@
 
 
 #' @export
-diachrony_uniform <- function(df, tpq, taq, y, group, k=10, x_prediction=30){
+diachrony_uniform <- function(df, tpq, taq, y, group,
+                              k=10, predictor_fun=predictor_loess,
+                              x_prediction=30, ...){
   # all arguments must be present
   if (missing(df))
     stop('"df" is missing')
@@ -120,7 +124,7 @@ diachrony_uniform <- function(df, tpq, taq, y, group, k=10, x_prediction=30){
                           ~.x %>%
                             # shake and predict
                             shake_uniform() %>%
-                            predictor_loess(x_prediction = x_prediction) %>%
+                            predictor_fun(x_prediction = x_prediction) %>%
                             # and dont forget the group
                             dplyr::mutate(group=.y)
                         )

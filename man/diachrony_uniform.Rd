@@ -4,7 +4,17 @@
 \alias{diachrony_uniform}
 \title{Use permutations to compare diachronic variations}
 \usage{
-diachrony_uniform(df, tpq, taq, y, group, k = 10, x_prediction = 30)
+diachrony_uniform(
+  df,
+  tpq,
+  taq,
+  y,
+  group,
+  k = 10,
+  predictor_fun = predictor_loess,
+  x_prediction = 30,
+  ...
+)
 }
 \arguments{
 \item{df}{\code{\link[=data.frame]{data.frame()}} to work on}
@@ -17,7 +27,11 @@ diachrony_uniform(df, tpq, taq, y, group, k = 10, x_prediction = 30)
 
 \item{k}{number of permutations (10 by default)}
 
+\item{predictor_fun}{function one of \link{predictor}}
+
 \item{x_prediction}{on which to predict new values. See Details.}
+
+\item{...}{additional arguments to \code{predictor_fun}}
 }
 \description{
 More details here.
