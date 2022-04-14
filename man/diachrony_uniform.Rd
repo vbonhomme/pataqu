@@ -4,7 +4,7 @@
 \alias{diachrony_uniform}
 \title{Prepare a data.frame for permutations}
 \usage{
-diachrony_uniform(df, tpq, taq, y)
+diachrony_uniform(df, tpq, taq, y, group, k = 10, x_prediction = 30)
 }
 \arguments{
 \item{df}{\code{\link[=data.frame]{data.frame()}} to work on}
@@ -12,15 +12,41 @@ diachrony_uniform(df, tpq, taq, y)
 \item{tpq, taq}{colname to use for tpq and taq (when shaking_gaussian)}
 
 \item{y}{colname to use for the value of interest}
+
+\item{group}{colname (optionnal) whether you have groups}
+
+\item{k}{number of permutations (10 by default)}
+
+\item{x_prediction}{on which to predict new values. See Details.}
 }
 \description{
 This allows to ease and fasten permutations because the raw data is
 \code{prepare}d once for all. This is a thin wrapper around \code{\link[dplyr:rename]{dplyr::rename()}} that
 also checks conditions before permutations.
 }
+\details{
+If \code{x_prediction} can be passed as a single numeric or as
+a vector of numeric. If a single numeric is passed, a regular sequence of this length
+will be created between \code{min(tpq)} and \code{max(taq)}, ie covering the full temporal span.
+If a vector of numeric is passed, then these values will be used. By default, it
+eis \code{30}, so that 30 dates covering the temporal span will be used. See examples.
+}
 \examples{
+set.seed(2329) # for replicability
+
 # let's say animals had different names
 x <- animals \%>\% dplyr::rename(post=tpq, ante=taq, lsi=value)
 x
 x \%>\% diachrony_uniform(post, ante, lsi)
+
+animals \%>\% diachrony_uniform(tpq, taq, value, k=2, group=taxa)
+
+\dontrun{
+library(ggplot2)
+x \%>\% ggplot() +
+  aes(x_new, y, group=k, col=group) +
+  geom_point(size=0.3) +
+  theme_minimal() +
+ geom_smooth(aes(group=NULL, col=group))
+}
 }
