@@ -7,4 +7,4 @@ NULL
 
 # to cope with "no visible binding for global variable"
 # and the use of preformatted tibbles
-globalVariables(c("taq", "tpq", "sd", "mean"))
+globalVariables(c("taq", "tpq", "sd", "mean", "x_new"))

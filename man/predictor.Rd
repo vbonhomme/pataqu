@@ -3,9 +3,21 @@
 \name{predictor}
 \alias{predictor}
 \alias{predictor_loess}
+\alias{predictor_gam}
+\alias{predictor_lm}
+\alias{predictor_bins_breaks}
+\alias{predictor_bins_midpoint}
 \title{Predictor function to summarise results after shaking}
 \usage{
 predictor_loess(df, x_prediction, ...)
+
+predictor_gam(df, x_prediction, ...)
+
+predictor_lm(df, x_prediction, ...)
+
+predictor_bins_breaks(df, x_prediction, ...)
+
+predictor_bins_midpoint(df, x_prediction, ...)
 }
 \arguments{
 \item{df}{\code{\link[=tibble]{tibble()}}, typically after \link{shake}. Must have a .x and and .y columns.}
@@ -40,7 +52,15 @@ adjustment and summarises raw value either using mean or median (see Examples)
 }
 \section{Functions}{
 \itemize{
-\item \code{predictor_loess}: predict using loess
+\item \code{predictor_loess}: predict using \code{\link[stats:loess]{stats::loess()}}
+
+\item \code{predictor_gam}: predict using \link[mgcv:gam]{mgcv::gam}
+
+\item \code{predictor_lm}: predict using \code{\link[stats:lm]{stats::lm()}}
+
+\item \code{predictor_bins_breaks}: no fit, just \code{\link[=cut]{cut()}} and returns slices as factor
+
+\item \code{predictor_bins_midpoint}: no fit, just \code{\link[=cut]{cut()}} and returns slices as numeric
 }}
 
 \examples{
@@ -50,10 +70,31 @@ set.seed(2329)
 x_pred <- 1:100
 df <- data.frame(x_new=x_pred, y=runif(100, -1, 1) + x_pred/100)
 x_pred <- 1:100
-pred_075 <- predictor_loess(df, x_pred)
-pred_05 <- predictor_loess(df, x_pred, span=0.5)
-plot(df$x_new, df$y)
-lines(pred_075$x_new, pred_075$y, col="red")
-lines(pred_05$x_new, pred_05$y, col="blue")
+p_loess  <- predictor_loess(df, x_pred) # default span, ie 0.75
+p_loess2 <- predictor_loess(df, x_pred, span=0.2) # custom span
 
+# or using gam instead
+p_gam <- predictor_gam(df, x_pred)
+# or lm
+p_lm  <- predictor_lm(df, x_pred)
+
+plot(df$x_new, df$y)
+lines(p_loess$x_new, p_loess$y, col="firebrick3")
+lines(p_loess2$x_new, p_loess2$y, col="orange")
+lines(p_gam$x_new, p_gam$y, col="blue")
+lines(p_lm$x_new, p_lm$y, col="forestgreen")
+
+### bins
+# when using bins the output depends of the function
+p_breaks <- predictor_bins_breaks(df, x_pred)
+# this returns factors
+p_breaks
+# and their natural graphical output is a boxplot
+p_breaks \%>\% plot()
+
+# but this one returns midpoint as a numeric
+p_midpoint <- predictor_bins_midpoint(df, x_pred)
+# and the binning is quite clear here
+plot(df$x_new, df$y)
+points(p_midpoint$x_new, p_midpoint$y, col="blue", pch=20)
 }
