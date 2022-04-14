@@ -29,8 +29,10 @@ Imports:
     dplyr,
     ggplot2,
     magrittr,
+    mgcv,
     progress,
     purrr,
     rlang (>= 0.4.11),
-    stats
+    stats,
+    tibble
 Roxygen: list(markdown = TRUE)
