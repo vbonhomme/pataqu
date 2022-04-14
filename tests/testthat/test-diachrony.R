@@ -10,13 +10,10 @@ test_that("prepare diachrony works", {
 
   # NAs and posterior
   pb <- animals
-  pb[1, 3] <- NA
-  pb[3, 1] <- NA
-  pb$tpq[c(6, 7)] <- 50000
-  pb %>% diachrony_uniform(tpq, taq, value)
-
-
+  pb$taq[c(4, 5)] <- NA
+  pb$tpq[c(6, 7)] <- NA
+  pb$tpq[c(8, 9)] <- Inf
+  expect_error(expect_message(pb %>% diachrony_uniform(tpq, taq, value), "NA.* 4, 5, 6, 7"))
+  expect_error(expect_message(pb %>% diachrony_uniform(tpq, taq, value), "tpq.*posterior 8, 9"))
 })
 
-
-pb

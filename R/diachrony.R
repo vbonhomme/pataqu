@@ -50,7 +50,7 @@ diachrony_uniform <- function(df, tpq, taq, y){
       message(" * NA at lines c(", paste(which(checked$na), collapse = ", "), ")")
 
     if (any(checked$d)){
-      if (mean(checked$d)>0.5)
+      if (mean(checked$d, na.rm=TRUE)>0.5)
         message(" * tpq is posterior to taq for most dates. Did you inverted tpq and taq?")
       else
         message(" * tpq is posterior to taq at lines c(", paste(which(checked$d), collapse = ", "), ")")
