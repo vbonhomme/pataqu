@@ -6,7 +6,7 @@
 \alias{pataqu-package}
 \title{pataqu: Permutationnal Analysis of Terminus Ante and post QUem data}
 \description{
-pataqu uses permutationnal approach to deal with data that comes with uncertainties. It it typically aimed at working with temporal data that are not exactly defined but comes with lower (and upper) bounds, also called terminus ante (and post) quem.
+pataqu uses permutationnal approach to deal with data that comes with uncertainties on x. It it typically aimed at working with temporal data that are not exactly defined but comes with lower (and upper) bounds, also called terminus ante (and post) quem. It can also be used when dating, typically radiocarbon datation, comes with a confidence interval likely to affect interpretation. More generally, it is a permutationnal approach that allows to inspect both graphically and statistically the effects of x uncertainties.
 }
 \seealso{
 Useful links:
