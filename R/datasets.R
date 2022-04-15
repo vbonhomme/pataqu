@@ -17,13 +17,14 @@
 #' @source Unpublished dataset, modified by the authors to become a toy dataset.
 "animals"
 
-#' Animals with 100 permutations
+#' Animals with 20 permutations on 7 temporal slices
 #'
 #' See [animals]. This is obtained with:
 #' ```
 #' set.seed(2329)
-#' animals100 <-  quake(animals, tpq, taq, value, k=100, group=taxa)
+#' animals_q <-  quake_uniform(animals, tpq, taq, value, k=20, group=taxa) %>%
+#'   dplyr::filter(x_new < 100, x_new > -100)
 #'```
 #'
-"animals100"
+"animals_q"
 

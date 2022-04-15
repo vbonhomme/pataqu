@@ -6,14 +6,14 @@
 #' @param ... additional parameters to [ggplot2::geom_line()]
 #'
 #' @examples
-#' animals100 %>%
+#' animals_q %>%
 #' spaghetti()
 #'
 #' # you can easily customize it
 #' # color palette from https://www.colourlovers.com/palette/1473/Ocean_Five
 #' colors <- c("bird"="#00A0B0","cat"="#CC333F", "frog"="#CBE86B", "mouse"="#EDC951")
 #' library(ggplot2)
-#' animals100 %>%
+#' animals_q %>%
 #' spaghetti(alpha=0.5, size=0.1) +
 #'   scale_color_manual(values=colors) +
 #'   xlab("year") + ylab("value of interest") +
