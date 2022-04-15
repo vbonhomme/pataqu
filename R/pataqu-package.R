@@ -137,3 +137,13 @@ NULL
 #' @export enquo enquos .data := as_name as_label
 NULL
 
+# utils ----
+# no return only stop
+.col_exists <- function(df, col){
+  if (col %in% colnames(df)) {
+    TRUE
+   } else {
+    message(' * "', col, '" does not exist')
+    FALSE
+  }
+}

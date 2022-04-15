@@ -38,60 +38,41 @@
 #' }
 #' @export
 #' @aliases quake
-quake_uniform <- function(df, tpq, taq, y, group,
-                              k=10, predictor_fun=predictor_loess,
-                              x_prediction=30, ...){
-  # all arguments must be present
+quake_uniform <- function(df, tpq=tpq, taq=taq, y=y, group=group,
+                          k=10,
+                          predictor_fun=predictor_loess,
+                          x_prediction=30, ...){
+  # check df first
   if (missing(df))
     stop('"df" is missing')
-  if (missing(tpq))
-    stop('"tpq" is missing')
-  if (missing(taq))
-    stop('"taq" is missing')
-  if (missing(y))
-    stop('"y" is missing')
+  if (!is.data.frame(df))
+    stop('"df" must be a data.frame or a tibble')
 
   # tidy eval now
-  enquo_tpq <- enquo(tpq)
-  enquo_taq <- enquo(taq)
-  enquo_y   <- enquo(y)
-
+  enquo_tpq   <- enquo(tpq)
+  enquo_taq   <- enquo(taq)
+  enquo_y     <- enquo(y)
   enquo_group <- enquo(group)
 
+  # col checking to prevent terrible things
+  .check_quake_cols(df, enquo_tpq, enquo_taq, enquo_y, missing(group), enquo_group)
+
+  # column existence is delegated to select below
   # select and rename
   if (missing(group)){
-    #in case a group is not provided, we do not select but create a constant one
+    message(" * no group defined")
+    # in case a group is not provided, we do not select but create a constant one
     # for downstream splitting
-    ready <-  dplyr::select(df, tpq=!!enquo_tpq, taq=!!enquo_taq, y=!!enquo_y) %>%
-      dplyr::mutate(group=0)
+    ready <-  df %>%
+      dplyr::select(tpq=!!enquo_tpq, taq=!!enquo_taq, y=!!enquo_y) %>% dplyr::mutate(group="foo")
   } else {
+    message(" * grouping on ", as_label(enquo_group))
     # but if provided, of course, we collect it
-    ready <- dplyr::select(df, tpq=!!enquo_tpq, taq=!!enquo_taq, y=!!enquo_y, group=!!enquo(group))
+    ready <- dplyr::select(df, tpq=!!enquo_tpq, taq=!!enquo_taq, y={{y}}, group=!!enquo_group)
   }
 
-  ## checking begins
-  # we prefer this approach so that we can notice bad lines
-  checked <-  ready %>%
-    dplyr::transmute(
-      na = apply(is.na(ready), 1, any), # na flag
-      d  = tpq>taq) # tpq > taq flag
-
-  # some not satisfied and will end up with message, then stop
-  if (any(checked)){
-    if (any(checked$na))
-      message(" * NA at lines c(", paste(which(checked$na), collapse = ", "), ")")
-
-    if (any(checked$d)){
-      if (mean(checked$d, na.rm=TRUE)>0.5)
-        message(" * tpq is posterior to taq for most dates. Did you inverted tpq and taq?")
-      else
-        message(" * tpq is posterior to taq at lines c(", paste(which(checked$d), collapse = ", "), ")")
-    }
-
-    stop("please fix this before permutations")
-  }
-  ## checking ends
-
+  # checking, delegated to domestic .check_quake
+  .check_quake_data(ready)
 
   # prepare x_prediction
   domain <- range(c(ready$taq, ready$tpq))
@@ -109,7 +90,7 @@ quake_uniform <- function(df, tpq, taq, y, group,
   # because we're worth it, add a progress bar
   message(" * launching ", k, " permutations")
   pb <- progress::progress_bar$new(
-    format = " shaking data [:bar] :percent eta: :eta",
+    format = " * shaking data [:bar] :percent eta: :eta",
     total = k, clear = FALSE, width= 60)
 
   # the workhouse map
@@ -137,11 +118,49 @@ quake_uniform <- function(df, tpq, taq, y, group,
     # cosmetics: put the k as first column
     dplyr::relocate(k, group)
 
+  # rename
+  res <- dplyr::rename(res, !!enquo_group := group, !!enquo_y := y)
+
   # if no group was provided, drop the 0s
   if (missing(group))
-    res <- dplyr::select(res, -group)
+    res <- dplyr::select(res, -!!enquo_group)
 
   # return this beauty
   res
 }
 
+# quite laborious but one day NSE will have no secrets for me
+.check_quake_cols <- function(df, enquo_tpq, enquo_taq, enquo_y, missing_group, enquo_group){
+  cols <- c(.col_exists(df, as_label(enquo_tpq)),
+            .col_exists(df, as_label(enquo_taq)),
+            .col_exists(df, as_label(enquo_y)),
+            ifelse(missing_group, TRUE,
+                   .col_exists(df, as_label(enquo_group))))
+  if (!all(cols))
+    stop("please fix this before permutations", call. = FALSE)
+  # no return if fine
+}
+
+.check_quake_data <- function(x){
+  ## checking begins
+  # we prefer this approach so that we can notice bad lines
+  checked <-  x %>%
+    dplyr::transmute(
+      na = apply(is.na(x), 1, any), # na flag
+      d  = tpq>taq)                 # tpq > taq flag
+
+  # some not satisfied and will end up with message, then stop
+  if (any(checked)){
+    if (any(checked$na))
+      message(" * NA at lines c(", paste(which(checked$na), collapse = ", "), ")")
+
+    if (any(checked$d, na.rm = TRUE)){
+      if (mean(checked$d, na.rm=TRUE)>0.5)
+        message(" * tpq is posterior to taq for most dates. Did you inverted tpq and taq?")
+      else
+        message(" * tpq is posterior to taq at lines c(", paste(which(checked$d), collapse = ", "), ")")
+    }
+    stop("please fix this before permutations", call. = FALSE)
+  }
+  # no return, only side effects
+}

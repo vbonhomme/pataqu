@@ -7,10 +7,10 @@
 \usage{
 quake_uniform(
   df,
-  tpq,
-  taq,
-  y,
-  group,
+  tpq = tpq,
+  taq = taq,
+  y = y,
+  group = group,
   k = 10,
   predictor_fun = predictor_loess,
   x_prediction = 30,

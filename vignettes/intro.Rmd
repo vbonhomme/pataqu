@@ -41,7 +41,7 @@ The idea is:
 
 We will load the package and also use `dplyr` and `ggplot2` from the [tidyverse](tidyverse.org/). Overall, if you `library(tidyverse)` you should not need much more^[and typically you will not need to `dplyr::` or `ggplot2::` like what you have in function examples.]
 
-```{r setup, message=FALSE}
+```{r setup, message=FALSE, }
 library(dplyr)
 library(ggplot2)
 library(pataqu)
@@ -71,9 +71,9 @@ What a mess! We could try to add a mid point and add a smoother on top of them.
 animals %>% 
   mutate(x_new=(tpq+taq)/2) %>% 
   ggplot() +
- aes(x=x_new, y=value, col=taxa) +
- geom_point(size=0.1) +
- geom_smooth(method="loess", formula="y~x", se=FALSE) -> gg_mid
+  aes(x=x_new, y=value, col=taxa) +
+  geom_point(size=0.1) +
+  geom_smooth(method="loess", formula="y~x", se=FALSE) -> gg_mid
 gg_mid
 ```
 We now are able to see some trends but we lost the uncertainty on x in the meantime.
@@ -102,34 +102,32 @@ The mother function is
 We will simulate 5 new datasets with randomized datations. The true dates can be anytime between ptq and taq. We use `quake_uniform`.
 ```{r quake1}
 a_q <- animals %>% 
-  quake_uniform(tpq, taq, value, k=5, group=taxa)
+  quake_uniform(tpq=tpq, taq=taq, y=value, k=5, group=taxa)
 ```
+<!-- <!-- -->
+<!-- Let's have a look to the results: -->
+<!-- ```{r} -->
+<!-- a_q -->
+<!-- # spaghetti(a_q) -->
+<!-- ``` -->
+<!-- One can now test _globally_ when patterns between taxa differ: -->
 
-Let's have a look to the results:
-```{r}
-a_q
-spaghetti(a_q)
-```
-One can now test _globally_ when patterns between taxa differ:
+<!-- ```{r} -->
+<!-- res_global <- a_q %>% synchrony() -->
+<!-- res_global %>% filter(p<1e-4) -->
+<!-- ``` -->
 
-```{r}
-res_global <- a_q %>% synchrony()
-res_global %>% filter(p<1e-4)
-```
+<!-- But also test for pairwise differences: -->
+<!-- ```{r} -->
+<!-- res <- a_q %>% synchrony_pw() -->
+<!-- head(res) -->
+<!-- ``` -->
 
-But also test for pairwise differences:
-```{r}
-res <- a_q %>% synchrony_pw()
-head(res)
-```
+<!-- And we can also check only those that differ: -->
 
-And we can also check only those that differ:
+<!-- ```{r} -->
+<!--  res %>% filter(p<0.0001) -->
+<!-- ``` -->
 
-```{r}
- res %>% filter(p<0.0001)
-```
-
-------
-[pkg name]: hence the name of the package which is also a pun, in French.
-
+<!-- --> -->
 
