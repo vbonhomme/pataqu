@@ -20,7 +20,13 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/vbonhomme/pataqu/branch/master/graph/badge.svg)](https://app.codecov.io/gh/vbonhomme/pataqu?branch=master)
 <!-- badges: end -->
 
-The goal of pataqu is to deal with uncertainties is temporal data.
+pataqu uses permutationnal approach to deal with data that comes with uncertainties on x. 
+
+It it typically aimed at working with temporal data that are not exactly defined but comes with lower (and upper) bounds, also called [terminus ante (and post) quem](https://en.wikipedia.org/wiki/Terminus_post_quem). 
+
+It can also be used when dating, typically [radiocarbon dating](https://en.wikipedia.org/wiki/Radiocarbon_dating), comes with a confidence interval likely to affect interpretation.
+ 
+More generally, it is a permutationnal approach that allows to inspect both graphically and statistically the effects of x uncertainties.
 
 ## Installation
 
@@ -31,11 +37,72 @@ You can install the development version of pataqu from [GitHub](https://github.c
 devtools::install_github("vbonhomme/pataqu")
 ```
 
+Or the latest version released on CRAN with:
+
+``` r
+install.packages("pataqu")
+```
+
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Let's say you measure a `value` of interest on archaeological animal remains.
+These remains are recovered from sites only dated with terminus ante and post quem. 
+In these sites, you find several species and you would like to test :
 
+1. The effect of these temporal uncertainties
+2. How they affect the temporal trend of each species
+3. When and between which pairs they differ
+
+We first load `pataqu` and then have a look to the `animals` dataset
 ```{r example}
 library(pataqu)
-## basic example code
+animals
+# We only show the first lines but you can View(animals)
 ```
+
+Let's visualize what happens if you decide to take the midpoint between your tpq and your taq and display temporal trend for each species:
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# create the mid point
+animals_mid <-  mutate(animals, x=(tpq + taq)/2)
+
+# visualize with a loess
+ggplot(animals_mid) +
+ aes(x=x, y=value, col=taxa) +
+ geom_point(size=0.1) +
+ geom_smooth(method="loess", formula="y~x", se=FALSE) +
+ theme_minimal()
+
+```
+
+What a mess! And still, we do not take into account uncertainties on dating, which is the reason we are all here today. A more realistic view would be something like:
+
+```{r}
+ggplot(animals_mid) +
+ aes(x=x, y=value, col=taxa) +
+ geom_errorbarh(aes(xmin=tpq, xmax=taq)) +
+ geom_point(size=0.1) +
+ geom_smooth(method="loess", formula="y~x", se=FALSE) +
+ theme_minimal()
+```
+
+
+
+
+
+We will simulate 5 new datasets with randomized datations. The true dates can be anytime between ptq and taq. We use `quake_uniform`.
+```{r}
+a_q <- animals %>% 
+  quake_uniform(tpq, taq, value, k=5, group=taxa)
+```
+
+Let's have a look to the results:
+```{r}
+a_q
+spaghetti(a_q)
+
+```
+
