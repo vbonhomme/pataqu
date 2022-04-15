@@ -2,7 +2,8 @@
 % Please edit documentation in R/quake.R
 \name{quake_uniform}
 \alias{quake_uniform}
-\title{Use permutations to compare diachronic variations}
+\alias{quake}
+\title{Use permutations to visualize and test uncertainties on x}
 \usage{
 quake_uniform(
   df,

@@ -1,4 +1,4 @@
-#' Use permutations to compare diachronic variations
+#' Use permutations to visualize and test uncertainties on x
 #'
 #' More details here.
 #'
@@ -37,6 +37,7 @@
 #'  geom_smooth(aes(group=NULL, col=group))
 #' }
 #' @export
+#' @aliases quake
 quake_uniform <- function(df, tpq, taq, y, group,
                               k=10, predictor_fun=predictor_loess,
                               x_prediction=30, ...){

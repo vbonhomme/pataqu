@@ -34,5 +34,6 @@ Imports:
     purrr,
     rlang (>= 0.4.11),
     stats,
-    tibble
+    tibble,
+    tidyr
 Roxygen: list(markdown = TRUE)
