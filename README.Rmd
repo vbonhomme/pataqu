@@ -56,7 +56,7 @@ In these sites, you find several species and you would like to test :
 We first load `pataqu` and then have a look to the `animals` dataset
 ```{r example}
 library(pataqu)
-animals
+head(animals)
 # We only show the first lines but you can View(animals)
 ```
 
@@ -68,6 +68,7 @@ library(ggplot2)
 
 # create the mid point
 animals_mid <-  mutate(animals, x=(tpq + taq)/2)
+head(animals_mid)
 
 # visualize with a loess
 ggplot(animals_mid) +
@@ -88,10 +89,7 @@ ggplot(animals_mid) +
  geom_smooth(method="loess", formula="y~x", se=FALSE) +
  theme_minimal()
 ```
-
-
-
-
+Here comes pataqu. 
 
 We will simulate 5 new datasets with randomized datations. The true dates can be anytime between ptq and taq. We use `quake_uniform`.
 ```{r}
@@ -104,5 +102,23 @@ Let's have a look to the results:
 a_q
 spaghetti(a_q)
 
+```
+One can now test _globally_ when pattersn between taxa differ:
+
+```{r}
+res_global <- a_q %>% synchrony()
+res_global %>% filter(p<1e-4)
+```
+
+But also test for pairwise differences:
+```{r}
+res <- a_q %>% synchrony_pw()
+head(res)
+```
+
+And we can also check only those that differ:
+
+```{r}
+ res %>% filter(p<0.0001)
 ```
 
