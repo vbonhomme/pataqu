@@ -139,9 +139,9 @@
 <code class="sourceCode R"><span class="va">animals</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>x_new<span class="op">=</span><span class="op">(</span><span class="va">tpq</span><span class="op">+</span><span class="va">taq</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
- <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">x_new</span>, y<span class="op">=</span><span class="va">value</span>, col<span class="op">=</span><span class="va">taxa</span><span class="op">)</span> <span class="op">+</span>
- <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span>
- <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span>method<span class="op">=</span><span class="st">"loess"</span>, formula<span class="op">=</span><span class="st">"y~x"</span>, se<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">gg_mid</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">x_new</span>, y<span class="op">=</span><span class="va">value</span>, col<span class="op">=</span><span class="va">taxa</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span>method<span class="op">=</span><span class="st">"loess"</span>, formula<span class="op">=</span><span class="st">"y~x"</span>, se<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">gg_mid</span>
 <span class="va">gg_mid</span></code></pre></div>
 <p><img src="intro_files/figure-html/gg_mid1-1.png" width="700"> We now are able to see some trends but we lost the uncertainty on x in the meantime. The graph before may have also been the one below, with the same likelihood.</p>
 <p>We take animals and simply draw other <code>x_new</code> values, not on the midpoint, somewhere between the tpq and taq of each line. We use <code>set.seed</code> for the sake of replicability only.</p>
@@ -161,56 +161,32 @@
 <p>The mother function is We will simulate 5 new datasets with randomized datations. The true dates can be anytime between ptq and taq. We use <code>quake_uniform</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">a_q</span> <span class="op">&lt;-</span> <span class="va">animals</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="../reference/quake_uniform.html">quake_uniform</a></span><span class="op">(</span><span class="va">tpq</span>, <span class="va">taq</span>, <span class="va">value</span>, k<span class="op">=</span><span class="fl">5</span>, group<span class="op">=</span><span class="va">taxa</span><span class="op">)</span>
+  <span class="fu"><a href="../reference/quake_uniform.html">quake_uniform</a></span><span class="op">(</span>tpq<span class="op">=</span><span class="va">tpq</span>, taq<span class="op">=</span><span class="va">taq</span>, y<span class="op">=</span><span class="va">value</span>, k<span class="op">=</span><span class="fl">5</span>, group<span class="op">=</span><span class="va">taxa</span><span class="op">)</span>
+<span class="co">#&gt;  * grouping on taxa</span>
 <span class="co">#&gt;  * working on a temporal sequence of 30 steps</span>
 <span class="co">#&gt;  * launching 5 permutations</span></code></pre></div>
-<p>Let’s have a look to the results:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">a_q</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 600 × 4</span></span>
-<span class="co">#&gt;        k group   x_new        y</span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 cat   -<span style="color: #BB0000;">225</span>    -<span style="color: #BB0000;">0.184</span>  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 cat   -<span style="color: #BB0000;">193.</span>   -<span style="color: #BB0000;">0.167</span>  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     1 cat   -<span style="color: #BB0000;">161.</span>   -<span style="color: #BB0000;">0.148</span>  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     1 cat   -<span style="color: #BB0000;">129.</span>   -<span style="color: #BB0000;">0.128</span>  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     1 cat    -<span style="color: #BB0000;">97.4</span>  -<span style="color: #BB0000;">0.106</span>  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     1 cat    -<span style="color: #BB0000;">65.5</span>  -<span style="color: #BB0000;">0.082</span><span style="color: #BB0000; text-decoration: underline;">2</span> </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     1 cat    -<span style="color: #BB0000;">33.6</span>  -<span style="color: #BB0000;">0.057</span><span style="color: #BB0000; text-decoration: underline;">1</span> </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     1 cat     -<span style="color: #BB0000;">1.72</span> -<span style="color: #BB0000;">0.031</span><span style="color: #BB0000; text-decoration: underline;">0</span> </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     1 cat     30.2  -<span style="color: #BB0000;">0.004</span><span style="color: #BB0000; text-decoration: underline;">12</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     1 cat     62.1   0.022<span style="text-decoration: underline;">5</span> </span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 590 more rows</span></span>
-<span class="fu"><a href="../reference/spaghetti.html">spaghetti</a></span><span class="op">(</span><span class="va">a_q</span><span class="op">)</span></code></pre></div>
-<p><img src="intro_files/figure-html/unnamed-chunk-1-1.png" width="700"> One can now test <em>globally</em> when patterns between taxa differ:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res_global</span> <span class="op">&lt;-</span> <span class="va">a_q</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/synchrony.html">synchrony</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt;  * testing on 30 temporal slices</span>
-<span class="co">#&gt;  * testing pairwise differences using kruskal_p</span>
-<span class="va">res_global</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">p</span><span class="op">&lt;</span><span class="fl">1e-4</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 0 × 2</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 2 variables: x_new &lt;dbl&gt;, p &lt;dbl&gt;</span></span></code></pre></div>
-<p>But also test for pairwise differences:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">a_q</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/synchrony.html">synchrony_pw</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt;  * testing on 30 temporal slices</span>
-<span class="co">#&gt;  * testing global differences using wilcox_p</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span>
-<span class="co">#&gt;   x_new pw                 p</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  -<span style="color: #BB0000;">225</span> bird ~ cat   0.007<span style="text-decoration: underline;">94</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  -<span style="color: #BB0000;">225</span> bird ~ frog  0.031<span style="text-decoration: underline;">7</span> </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  -<span style="color: #BB0000;">225</span> bird ~ mouse 0.007<span style="text-decoration: underline;">94</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  -<span style="color: #BB0000;">225</span> cat ~ frog   0.007<span style="text-decoration: underline;">94</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  -<span style="color: #BB0000;">225</span> cat ~ mouse  0.007<span style="text-decoration: underline;">94</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  -<span style="color: #BB0000;">225</span> frog ~ mouse 0.007<span style="text-decoration: underline;">94</span></span></code></pre></div>
-<p>And we can also check only those that differ:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"> <span class="va">res</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">p</span><span class="op">&lt;</span><span class="fl">0.0001</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 0 × 3</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 3 variables: x_new &lt;dbl&gt;, pw &lt;chr&gt;, p &lt;dbl&gt;</span></span></code></pre></div>
-<hr>
+<!-- <!-- -->
+<!-- Let's have a look to the results: -->
+<!-- ```{r} -->
+<!-- a_q -->
+<!-- # spaghetti(a_q) -->
+<!-- ``` -->
+<!-- One can now test _globally_ when patterns between taxa differ: -->
+<!-- ```{r} -->
+<!-- res_global <- a_q %>% synchrony() -->
+<!-- res_global %>% filter(p<1e-4) -->
+<!-- ``` -->
+<!-- But also test for pairwise differences: -->
+<!-- ```{r} -->
+<!-- res <- a_q %>% synchrony_pw() -->
+<!-- head(res) -->
+<!-- ``` -->
+<!-- And we can also check only those that differ: -->
+<!-- ```{r} -->
+<!--  res %>% filter(p<0.0001) -->
+<!-- ``` -->
+<!-- -->
+<p>–&gt;</p>
 </div>
 </div>
 

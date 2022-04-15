@@ -56,10 +56,10 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">quake_uniform</span><span class="op">(</span>
   <span class="va">df</span>,
-  <span class="va">tpq</span>,
-  <span class="va">taq</span>,
-  <span class="va">y</span>,
-  <span class="va">group</span>,
+  tpq <span class="op">=</span> <span class="va">tpq</span>,
+  taq <span class="op">=</span> <span class="va">taq</span>,
+  y <span class="op">=</span> <span class="va">y</span>,
+  group <span class="op">=</span> <span class="va">group</span>,
   k <span class="op">=</span> <span class="fl">10</span>,
   predictor_fun <span class="op">=</span> <span class="va">predictor_loess</span>,
   x_prediction <span class="op">=</span> <span class="fl">30</span>,
@@ -117,10 +117,11 @@ eis <code>30</code>, so that 30 dates covering the temporal span will be used. S
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> frog  Arl-Cp A-C_7039   -<span style="color: #BB0000;">15</span>    60 -<span style="color: #BB0000;">0.060</span><span style="color: #BB0000; text-decoration: underline;">8</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 5,523 more rows</span></span>
 <span class="r-in"><span class="va">x</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">quake_uniform</span><span class="op">(</span><span class="va">post</span>, <span class="va">ante</span>, <span class="va">lsi</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  * no group defined</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  * working on a temporal sequence of 30 steps</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  * launching 10 permutations</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 300 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        k   x_new        y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        k   x_new      lsi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 -<span style="color: #BB0000;">225</span>    -<span style="color: #BB0000;">0.132</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 -<span style="color: #BB0000;">193.</span>   -<span style="color: #BB0000;">0.112</span>  </span>
@@ -135,10 +136,11 @@ eis <code>30</code>, so that 30 dates covering the temporal span will be used. S
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 290 more rows</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">animals</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">quake_uniform</span><span class="op">(</span><span class="va">tpq</span>, <span class="va">taq</span>, <span class="va">value</span>, k<span class="op">=</span><span class="fl">2</span>, group<span class="op">=</span><span class="va">taxa</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  * grouping on taxa</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  * working on a temporal sequence of 30 steps</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  * launching 2 permutations</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 240 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        k group   x_new        y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        k taxa    x_new    value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 cat   -<span style="color: #BB0000;">225</span>    -<span style="color: #BB0000;">0.165</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1 cat   -<span style="color: #BB0000;">193.</span>   -<span style="color: #BB0000;">0.155</span>  </span>

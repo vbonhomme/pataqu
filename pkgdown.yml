@@ -3,7 +3,7 @@ pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   intro: intro.html
-last_built: 2022-04-15T16:36Z
+last_built: 2022-04-15T22:00Z
 urls:
   reference: https://vbonhomme.github.io/pataqu/reference
   article: https://vbonhomme.github.io/pataqu/articles
