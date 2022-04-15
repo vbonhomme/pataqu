@@ -12,7 +12,7 @@ animals100
 }
 \description{
 See \link{animals}. This is obtained with:\preformatted{set.seed(2329)
-animals100 <-  diachrony_uniform(animals, tpq, taq, value, k=100, group=taxa)
+animals100 <-  quake(animals, tpq, taq, value, k=100, group=taxa)
 }
 }
 \keyword{datasets}

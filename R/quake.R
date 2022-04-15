@@ -24,9 +24,9 @@
 #' # let's say animals had different names
 #' x <- animals %>% dplyr::rename(post=tpq, ante=taq, lsi=value)
 #' x
-#' x %>% diachrony_uniform(post, ante, lsi)
+#' x %>% quake_uniform(post, ante, lsi)
 #'
-#' animals %>% diachrony_uniform(tpq, taq, value, k=2, group=taxa)
+#' animals %>% quake_uniform(tpq, taq, value, k=2, group=taxa)
 #'
 #' \dontrun{
 #' library(ggplot2)
@@ -36,10 +36,8 @@
 #'   theme_minimal() +
 #'  geom_smooth(aes(group=NULL, col=group))
 #' }
-
-
 #' @export
-diachrony_uniform <- function(df, tpq, taq, y, group,
+quake_uniform <- function(df, tpq, taq, y, group,
                               k=10, predictor_fun=predictor_loess,
                               x_prediction=30, ...){
   # all arguments must be present
