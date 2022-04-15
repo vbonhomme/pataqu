@@ -9,8 +9,11 @@ Authors@R: c(
     role = c("aut"), comment = c(ORCID = "0000-0003-4515-1649")))
 Maintainer: Vincent Bonhomme <bonhomme.vincent@gmail.com>
 Description: pataqu uses permutationnal approach to deal with data that comes with 
- uncertainties. It it typically aimed at working with temporal data that are not exactly defined
- but comes with lower (and upper) bounds, also called terminus ante (and post) quem.
+ uncertainties on x. It it typically aimed at working with temporal data that are not exactly defined
+ but comes with lower (and upper) bounds, also called terminus ante (and post) quem. It can 
+ also be used when dating, typically radiocarbon datation, comes with a confidence interval likely 
+ to affect interpretation. More generally, it is a permutationnal approach that allows to 
+ inspect both graphically and statistically the effects of x uncertainties.
 License: AGPL (>= 3)
 Encoding: UTF-8
 LazyData: true
