@@ -12,7 +12,8 @@ spaghetti(x, ...)
 \item{...}{additional parameters to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}}
 }
 \description{
-ggplot2 primer for displaying the results of permutations
+ggplot2 primer on the result of \link{quake} for displaying the results of permutations.
+This allows inspecting the effect of \link{predictor}s.
 }
 \examples{
 animals_q \%>\%

@@ -1,6 +1,7 @@
 #' Spaghetti plot after permutations
 #'
-#' ggplot2 primer for displaying the results of permutations
+#' ggplot2 primer on the result of [quake] for displaying the results of permutations.
+#' This allows inspecting the effect of [predictor]s.
 #'
 #' @param x the result of a permutation function
 #' @param ... additional parameters to [ggplot2::geom_line()]
@@ -35,3 +36,4 @@ spaghetti <- function(x, ...){
   # print this beauty
   gg
 }
+
