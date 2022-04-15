@@ -48,6 +48,12 @@
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="articles/intro.html">Introducing pataqu</a>
+  </div>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -162,19 +168,19 @@
 <span class="co">#&gt; # A tibble: 600 × 4</span>
 <span class="co">#&gt;        k group   x_new        y</span>
 <span class="co">#&gt;    &lt;int&gt; &lt;chr&gt;   &lt;dbl&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt;  1     1 cat   -225    -0.201  </span>
-<span class="co">#&gt;  2     1 cat   -193.   -0.180  </span>
-<span class="co">#&gt;  3     1 cat   -161.   -0.157  </span>
-<span class="co">#&gt;  4     1 cat   -129.   -0.134  </span>
-<span class="co">#&gt;  5     1 cat    -97.4  -0.109  </span>
-<span class="co">#&gt;  6     1 cat    -65.5  -0.0836 </span>
-<span class="co">#&gt;  7     1 cat    -33.6  -0.0567 </span>
-<span class="co">#&gt;  8     1 cat     -1.72 -0.0296 </span>
-<span class="co">#&gt;  9     1 cat     30.2  -0.00440</span>
-<span class="co">#&gt; 10     1 cat     62.1   0.0213 </span>
+<span class="co">#&gt;  1     1 cat   -225    -0.180  </span>
+<span class="co">#&gt;  2     1 cat   -193.   -0.165  </span>
+<span class="co">#&gt;  3     1 cat   -161.   -0.148  </span>
+<span class="co">#&gt;  4     1 cat   -129.   -0.129  </span>
+<span class="co">#&gt;  5     1 cat    -97.4  -0.107  </span>
+<span class="co">#&gt;  6     1 cat    -65.5  -0.0838 </span>
+<span class="co">#&gt;  7     1 cat    -33.6  -0.0583 </span>
+<span class="co">#&gt;  8     1 cat     -1.72 -0.0316 </span>
+<span class="co">#&gt;  9     1 cat     30.2  -0.00476</span>
+<span class="co">#&gt; 10     1 cat     62.1   0.0247 </span>
 <span class="co">#&gt; # … with 590 more rows</span>
 <span class="fu"><a href="reference/spaghetti.html">spaghetti</a></span><span class="op">(</span><span class="va">a_q</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%"> One can now test <em>globally</em> when pattersn between taxa differ:</p>
+<p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%"> One can now test <em>globally</em> when patterns between taxa differ:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res_global</span> <span class="op">&lt;-</span> <span class="va">a_q</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="reference/synchrony.html">synchrony</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt;  * testing on 30 temporal slices</span>
@@ -192,7 +198,7 @@
 <span class="co">#&gt;   x_new pw                 p</span>
 <span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;</span>
 <span class="co">#&gt; 1  -225 bird ~ cat   0.00794</span>
-<span class="co">#&gt; 2  -225 bird ~ frog  0.222  </span>
+<span class="co">#&gt; 2  -225 bird ~ frog  0.151  </span>
 <span class="co">#&gt; 3  -225 bird ~ mouse 0.00794</span>
 <span class="co">#&gt; 4  -225 cat ~ frog   0.00794</span>
 <span class="co">#&gt; 5  -225 cat ~ mouse  0.00794</span>
