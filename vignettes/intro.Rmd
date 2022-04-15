@@ -1,0 +1,126 @@
+---
+title: "Introducing pataqu"
+author: Vincent Bonhomme, Allowen Evin
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{intro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r prelim, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+pataqu aims at visualizing and testing the effect of uncertainties on x values (ie the independant variable). This vignette quickly presents the rationale of the package then jump to a case study.
+
+## Rationale
+
+### Sources of uncertainties
+We chiefly had in mind archaeological data which dating of remains are often temporally bounded between two certain events, named _terminus post/ante quem_, further abbreviated tpq and taq^[hence the package name which is also a delicate pun, in French]. The tpq is the earliest date, the taq the latest.
+
+The _real_ event may have happened anytime between these two boundaries with a flat, uniform, density of probability along the interval.
+
+We can also think of radiocarbon dating, which comes with a prediction and a confidence interval (say $\mu ± \sigma$). But here the dating differ and the _real_ event has a  density of probability of gaussian nature with parameters $\mu$ and $\sigma$.
+
+Whatever the source of the uncertainty, the graphics, tests and overall stories we can obtain from data may well be affected. How robust your lovely trends to temporal uncertainties?
+
+pataqu aims at visualizing and testing this using permutations. This is not the only way to do it but in our view it has the merit to only use information contained in the data itself.
+
+The idea is:
+
+1. Simulate plausible new x values
+2. Display and/or test what you need
+3. Repeat many times and see what happens
+
+## Presenting the problem
+```{r setup}
+library(pataqu)
+```
+
+
+## Example
+
+Let's say you measure a `value` of interest on archaeological animal remains.
+These remains are recovered from sites only dated with terminus ante and post quem. 
+In these sites, you find several species and you would like to test :
+
+1. The effect of these temporal uncertainties
+2. How they affect the temporal trend of each species
+3. When and between which pairs they differ
+
+We first load `pataqu` and then have a look to the `animals` dataset
+```{r animals}
+library(pataqu)
+head(animals)
+# We only show the first lines but you can View(animals)
+```
+
+Let's visualize what happens if you decide to take the midpoint between your tpq and your taq and display temporal trend for each species:
+
+```{r loading dependencies}
+library(dplyr)
+library(ggplot2)
+
+# create the mid point
+animals_mid <-  mutate(animals, x=(tpq + taq)/2)
+head(animals_mid)
+
+# visualize with a loess
+ggplot(animals_mid) +
+ aes(x=x, y=value, col=taxa) +
+ geom_point(size=0.1) +
+ geom_smooth(method="loess", formula="y~x", se=FALSE) +
+ theme_minimal()
+
+```
+
+What a mess! And still, we do not take into account uncertainties on dating, which is the reason we are all here today. A more realistic view would be something like:
+
+```{r plot1}
+ggplot(animals_mid) +
+ aes(x=x, y=value, col=taxa) +
+ geom_errorbarh(aes(xmin=tpq, xmax=taq)) +
+ geom_point(size=0.1) +
+ geom_smooth(method="loess", formula="y~x", se=FALSE) +
+ theme_minimal()
+```
+Here comes pataqu. 
+
+We will simulate 5 new datasets with randomized datations. The true dates can be anytime between ptq and taq. We use `quake_uniform`.
+```{r quake1}
+a_q <- animals %>% 
+  quake_uniform(tpq, taq, value, k=5, group=taxa)
+```
+
+Let's have a look to the results:
+```{r}
+a_q
+spaghetti(a_q)
+```
+One can now test _globally_ when patterns between taxa differ:
+
+```{r}
+res_global <- a_q %>% synchrony()
+res_global %>% filter(p<1e-4)
+```
+
+But also test for pairwise differences:
+```{r}
+res <- a_q %>% synchrony_pw()
+head(res)
+```
+
+And we can also check only those that differ:
+
+```{r}
+ res %>% filter(p<0.0001)
+```
+
+------
+[pkg name]: hence the name of the package which is also a pun, in French.
+
+

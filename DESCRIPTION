@@ -19,6 +19,8 @@ Encoding: UTF-8
 LazyData: true
 Suggests: 
     covr,
+    knitr,
+    rmarkdown,
     roxygen2,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
@@ -40,3 +42,4 @@ Imports:
     tibble,
     tidyr
 Roxygen: list(markdown = TRUE)
+VignetteBuilder: knitr
