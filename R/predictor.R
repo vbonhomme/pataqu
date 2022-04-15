@@ -1,6 +1,6 @@
 #' Predictor function to summarise results after shaking
 #'
-#' These functions are used internally by `diachrony_` and `synchrony_` functions,
+#' These functions are used internally by `quake_` and `synchrony_` functions,
 #' but they may be of interest for custom constructions. See Details.
 #'
 #' @param df [tibble()], typically after [shake]. Must have a .x and and .y columns.
@@ -16,7 +16,7 @@
 #'
 #' These predictors follow these steps:
 #'
-#' 1. fit the `y` (value of interest) using the (typically shaked) `x`. We thus obtain
+#' 1. fit the `y` (value of interest) using the (typically shaken) `x`. We thus obtain
 #' a continuous model that we use to:
 #' 2. predict new `y` values on a range of `x`. These `x` values are typically fixed, so that
 #'  we can later obtain confidence intervals, etc. for each of these points.
@@ -26,12 +26,13 @@
 #' `predict_bin` makes no intermediate
 #' adjustment and summarises raw value either using mean or median (see Examples)
 #'
+#' `predict_none` just passes shaken values with no adjustment
 #' @examples
 #'
 #' # replicability
 #' set.seed(2329)
 #' x_pred <- 1:100
-#' df <- data.frame(x_new=x_pred, y=runif(100, -1, 1) + x_pred/100)
+#' df <- tibble::tibble(x_new=x_pred, y=runif(100, -1, 1) + x_pred/100)
 #' x_pred <- 1:100
 #' p_loess  <- predictor_loess(df, x_pred) # default span, ie 0.75
 #' p_loess2 <- predictor_loess(df, x_pred, span=0.2) # custom span
@@ -60,6 +61,11 @@
 #' # and the binning is quite clear here
 #' plot(df$x_new, df$y)
 #' points(p_midpoint$x_new, p_midpoint$y, col="blue", pch=20)
+#'
+#' # should you just want raw shaken values
+#' p_none <- predictor_none(df)
+#' plot(df$x_new, df$y, col="red", pch=20)
+#' points(p_none$x_new, p_none$y, col="blue", pch=3)
 #' @name predictor
 NULL
 
@@ -143,7 +149,12 @@ predictor_bins_midpoint <- function(df, x_prediction, ...){
                   as.character() %>% as.numeric())
 }
 
-
+#' @describeIn predictor no fit, just pass raw values
+#' @export
+predictor_none <- function(df, ...){
+  # pass, seems stupid but we can use the same scheme
+  df
+}
 
 
 

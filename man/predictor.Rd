@@ -7,6 +7,7 @@
 \alias{predictor_lm}
 \alias{predictor_bins_breaks}
 \alias{predictor_bins_midpoint}
+\alias{predictor_none}
 \title{Predictor function to summarise results after shaking}
 \usage{
 predictor_loess(df, x_prediction, ...)
@@ -18,6 +19,8 @@ predictor_lm(df, x_prediction, ...)
 predictor_bins_breaks(df, x_prediction, ...)
 
 predictor_bins_midpoint(df, x_prediction, ...)
+
+predictor_none(df, ...)
 }
 \arguments{
 \item{df}{\code{\link[=tibble]{tibble()}}, typically after \link{shake}. Must have a .x and and .y columns.}
@@ -27,7 +30,7 @@ predictor_bins_midpoint(df, x_prediction, ...)
 \item{...}{additional parameters for each predictors (see Details)}
 }
 \description{
-These functions are used internally by \code{diachrony_} and \code{synchrony_} functions,
+These functions are used internally by \code{quake_} and \code{synchrony_} functions,
 but they may be of interest for custom constructions. See Details.
 }
 \details{
@@ -39,7 +42,7 @@ Most of these functions are thin wrappers around built-in  predictors such as
 
 These predictors follow these steps:
 \enumerate{
-\item fit the \code{y} (value of interest) using the (typically shaked) \code{x}. We thus obtain
+\item fit the \code{y} (value of interest) using the (typically shaken) \code{x}. We thus obtain
 a continuous model that we use to:
 \item predict new \code{y} values on a range of \code{x}. These \code{x} values are typically fixed, so that
 we can later obtain confidence intervals, etc. for each of these points.
@@ -49,6 +52,8 @@ They thus aim at summarising new \code{y} values at fixed \code{x} values, using
 
 \code{predict_bin} makes no intermediate
 adjustment and summarises raw value either using mean or median (see Examples)
+
+\code{predict_none} just passes shaken values with no adjustment
 }
 \section{Functions}{
 \itemize{
@@ -61,6 +66,8 @@ adjustment and summarises raw value either using mean or median (see Examples)
 \item \code{predictor_bins_breaks}: no fit, just \code{\link[=cut]{cut()}} and returns slices as factor
 
 \item \code{predictor_bins_midpoint}: no fit, just \code{\link[=cut]{cut()}} and returns slices as numeric
+
+\item \code{predictor_none}: no fit, just pass raw values
 }}
 
 \examples{
@@ -68,7 +75,7 @@ adjustment and summarises raw value either using mean or median (see Examples)
 # replicability
 set.seed(2329)
 x_pred <- 1:100
-df <- data.frame(x_new=x_pred, y=runif(100, -1, 1) + x_pred/100)
+df <- tibble::tibble(x_new=x_pred, y=runif(100, -1, 1) + x_pred/100)
 x_pred <- 1:100
 p_loess  <- predictor_loess(df, x_pred) # default span, ie 0.75
 p_loess2 <- predictor_loess(df, x_pred, span=0.2) # custom span
@@ -97,4 +104,9 @@ p_midpoint <- predictor_bins_midpoint(df, x_pred)
 # and the binning is quite clear here
 plot(df$x_new, df$y)
 points(p_midpoint$x_new, p_midpoint$y, col="blue", pch=20)
+
+# should you just want raw shaken values
+p_none <- predictor_none(df)
+plot(df$x_new, df$y, col="red", pch=20)
+points(p_none$x_new, p_none$y, col="blue", pch=3)
 }
