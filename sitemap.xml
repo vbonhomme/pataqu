@@ -16,7 +16,7 @@
     <loc>https://vbonhomme.github.io/pataqu/reference/animals.html</loc>
   </url>
   <url>
-    <loc>https://vbonhomme.github.io/pataqu/reference/animals100.html</loc>
+    <loc>https://vbonhomme.github.io/pataqu/reference/animals_q.html</loc>
   </url>
   <url>
     <loc>https://vbonhomme.github.io/pataqu/reference/index.html</loc>
@@ -38,6 +38,12 @@
   </url>
   <url>
     <loc>https://vbonhomme.github.io/pataqu/reference/spaghetti.html</loc>
+  </url>
+  <url>
+    <loc>https://vbonhomme.github.io/pataqu/reference/synchrony.html</loc>
+  </url>
+  <url>
+    <loc>https://vbonhomme.github.io/pataqu/reference/synchrony_testers.html</loc>
   </url>
   <url>
     <loc>https://vbonhomme.github.io/pataqu/reference/tidyeval.html</loc>
