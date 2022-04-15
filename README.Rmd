@@ -103,7 +103,7 @@ a_q
 spaghetti(a_q)
 
 ```
-One can now test _globally_ when pattersn between taxa differ:
+One can now test _globally_ when patterns between taxa differ:
 
 ```{r}
 res_global <- a_q %>% synchrony()

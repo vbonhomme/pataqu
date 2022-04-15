@@ -137,22 +137,22 @@ a_q
 #> # A tibble: 600 × 4
 #>        k group   x_new        y
 #>    <int> <chr>   <dbl>    <dbl>
-#>  1     1 cat   -225    -0.201  
-#>  2     1 cat   -193.   -0.180  
-#>  3     1 cat   -161.   -0.157  
-#>  4     1 cat   -129.   -0.134  
-#>  5     1 cat    -97.4  -0.109  
-#>  6     1 cat    -65.5  -0.0836 
-#>  7     1 cat    -33.6  -0.0567 
-#>  8     1 cat     -1.72 -0.0296 
-#>  9     1 cat     30.2  -0.00440
-#> 10     1 cat     62.1   0.0213 
+#>  1     1 cat   -225    -0.180  
+#>  2     1 cat   -193.   -0.165  
+#>  3     1 cat   -161.   -0.148  
+#>  4     1 cat   -129.   -0.129  
+#>  5     1 cat    -97.4  -0.107  
+#>  6     1 cat    -65.5  -0.0838 
+#>  7     1 cat    -33.6  -0.0583 
+#>  8     1 cat     -1.72 -0.0316 
+#>  9     1 cat     30.2  -0.00476
+#> 10     1 cat     62.1   0.0247 
 #> # … with 590 more rows
 spaghetti(a_q)
 ```
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" /> One
-can now test *globally* when pattersn between taxa differ:
+can now test *globally* when patterns between taxa differ:
 
 ``` r
 res_global <- a_q %>% synchrony()
@@ -174,7 +174,7 @@ head(res)
 #>   x_new pw                 p
 #>   <dbl> <chr>          <dbl>
 #> 1  -225 bird ~ cat   0.00794
-#> 2  -225 bird ~ frog  0.222  
+#> 2  -225 bird ~ frog  0.151  
 #> 3  -225 bird ~ mouse 0.00794
 #> 4  -225 cat ~ frog   0.00794
 #> 5  -225 cat ~ mouse  0.00794
