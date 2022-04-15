@@ -26,6 +26,7 @@ The _real_ event may have happened anytime between these two boundaries with a f
 
 We can also think of radiocarbon dating, which comes with a prediction and a confidence interval (say $\mu ± \sigma$). But here the dating differ and the _real_ event has a  density of probability of gaussian nature with parameters $\mu$ and $\sigma$.
 
+### Consequences and how to inspect them
 Whatever the source of the uncertainty, the graphics, tests and overall stories we can obtain from data may well be affected. How robust your lovely trends to temporal uncertainties?
 
 pataqu aims at visualizing and testing this using permutations. This is not the only way to do it but in our view it has the merit to only use information contained in the data itself.
@@ -36,60 +37,68 @@ The idea is:
 2. Display and/or test what you need
 3. Repeat many times and see what happens
 
-## Presenting the problem
-```{r setup}
+## Case study: taq and ptq
+
+We will load the package and also use `dplyr` and `ggplot2` from the [tidyverse](tidyverse.org/). Overall, if you `library(tidyverse)` you should not need much more^[and typically you will not need to `dplyr::` or `ggplot2::` like what you have in function examples.]
+
+```{r setup, message=FALSE}
+library(dplyr)
+library(ggplot2)
 library(pataqu)
 ```
 
+### `animals` dataset
 
-## Example
+This dataset is made of real (and unpublished) data where researchers measured a `value` of interest on archaeological remains, in several `sites` (with `us` or stratigraphical units in them), dated with `tpq` and `taq`. The remains belonged to four `taxa`.
 
-Let's say you measure a `value` of interest on archaeological animal remains.
-These remains are recovered from sites only dated with terminus ante and post quem. 
-In these sites, you find several species and you would like to test :
-
-1. The effect of these temporal uncertainties
-2. How they affect the temporal trend of each species
-3. When and between which pairs they differ
-
-We first load `pataqu` and then have a look to the `animals` dataset
-```{r animals}
-library(pataqu)
+```{r animals_head}
 head(animals)
 # We only show the first lines but you can View(animals)
 ```
+How would we treat that? We could decide to display the full interval and see what happens:
 
-Let's visualize what happens if you decide to take the midpoint between your tpq and your taq and display temporal trend for each species:
+```{r gg_errorh }
+# pure cosmetics for lighter graphs
+theme_set(theme_minimal())
 
-```{r loading dependencies}
-library(dplyr)
-library(ggplot2)
-
-# create the mid point
-animals_mid <-  mutate(animals, x=(tpq + taq)/2)
-head(animals_mid)
-
-# visualize with a loess
-ggplot(animals_mid) +
- aes(x=x, y=value, col=taxa) +
- geom_point(size=0.1) +
- geom_smooth(method="loess", formula="y~x", se=FALSE) +
- theme_minimal()
-
+animals %>% ggplot() +
+ geom_errorbarh(aes(xmin=tpq, xmax=taq, y=value, col=taxa), size=0.2, alpha=0.5)
 ```
 
-What a mess! And still, we do not take into account uncertainties on dating, which is the reason we are all here today. A more realistic view would be something like:
+What a mess! We could try to add a mid point and add a smoother on top of them.
 
-```{r plot1}
-ggplot(animals_mid) +
- aes(x=x, y=value, col=taxa) +
- geom_errorbarh(aes(xmin=tpq, xmax=taq)) +
+```{r gg_mid1}
+animals %>% 
+  mutate(x_new=(tpq+taq)/2) %>% 
+  ggplot() +
+ aes(x=x_new, y=value, col=taxa) +
  geom_point(size=0.1) +
- geom_smooth(method="loess", formula="y~x", se=FALSE) +
- theme_minimal()
+ geom_smooth(method="loess", formula="y~x", se=FALSE) -> gg_mid
+gg_mid
 ```
-Here comes pataqu. 
+We now are able to see some trends but we lost the uncertainty on x in the meantime.
+The graph before may have also been the one below, with the same likelihood.
 
+We take animals and simply draw other `x_new` values, not on the midpoint, somewhere between the tpq and taq of each line. We use `set.seed` for the sake of replicability only.
+
+```{r gg_mid_animals2}
+set.seed(2329)
+# lets draw new x values
+animals2 <- animals %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(x_new=stats::runif(n=1, min=tpq, max=taq)) %>%
+    dplyr::ungroup()
+# and redo gg_mid graph with this new tibble
+gg_mid %+% animals2
+```
+
+Same same but different.
+
+The code used above is exactly what `shake_uniform` is made of behind the curtain^[check by yourself and type `pataqu::shake_uniform` (no brackets) in the console].
+
+pataqu generalizes this idea with a little decoration around this pattern.
+
+The mother function is
 We will simulate 5 new datasets with randomized datations. The true dates can be anytime between ptq and taq. We use `quake_uniform`.
 ```{r quake1}
 a_q <- animals %>% 
