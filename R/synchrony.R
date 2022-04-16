@@ -14,9 +14,12 @@
 #' By default `kruskal_p`/`wilcox_p` for `synchrony`/`synchrony_pw`, respectively.
 #'
 #' @examples
-#' (an1 <- animals_q %>% synchrony())
+#' # for the sake of speed
+#' mini_an_q <- animals_q %>% dplyr::filter(k<=5)
+#'
+#' (an1 <- mini_an_q %>% synchrony(y=value, group=taxa))
 #' # pairwise testing and using aov here
-#' (an2 <- animals_q %>% synchrony_pw(test_fun=aov_p))
+#' (an2 <- mini_an_q %>% synchrony_pw(y=value, group=taxa, test_fun=aov_p))
 #'
 #' # you can easily filter where it differs with
 #' alpha=1e-3
@@ -27,11 +30,11 @@
 #' tidyr::separate(an2, col=pw, into=c("group1", "group2"), sep=" ~ ", remove=FALSE)
 #'
 #' # if your tibble have different names just mention them
-#' animals_q %>%
+#' mini_an_q %>%
 #'   # rename to simulate different names
-#'   dplyr::rename(taxa=group, year=x_new, value=y) %>%
+#'   dplyr::rename(species=taxa, year=x_new, measurement=value) %>%
 #'   # you retain your names
-#'   synchrony(year, value, taxa)
+#'   synchrony(year, measurement, species)
 #'
 #' @export
 synchrony <- function(df, x=x_new, y=y, group=group, test_fun=kruskal_p){
