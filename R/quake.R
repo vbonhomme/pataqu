@@ -42,6 +42,8 @@ quake_uniform <- function(df, tpq=tpq, taq=taq, y=y, group=group,
                           k=10,
                           predictor_fun=predictor_loess,
                           x_prediction=30, ...){
+
+  ## checking, round 1
   # check df first
   if (missing(df))
     stop('"df" is missing')
@@ -57,8 +59,10 @@ quake_uniform <- function(df, tpq=tpq, taq=taq, y=y, group=group,
   # col checking to prevent terrible things
   .check_quake_cols(df, enquo_tpq, enquo_taq, enquo_y, missing(group), enquo_group)
 
-  # column existence is delegated to select below
-  # select and rename
+  ## preparing
+  # we use this select and renaming approach to
+  # define custom shaker. There is probably a better way but this one
+  # is not so bad though
   if (missing(group)){
     message(" * no group defined")
     # in case a group is not provided, we do not select but create a constant one
@@ -71,6 +75,7 @@ quake_uniform <- function(df, tpq=tpq, taq=taq, y=y, group=group,
     ready <- dplyr::select(df, tpq=!!enquo_tpq, taq=!!enquo_taq, y={{y}}, group=!!enquo_group)
   }
 
+  ## checking round 2
   # checking, delegated to domestic .check_quake
   .check_quake_data(ready)
 
@@ -85,7 +90,7 @@ quake_uniform <- function(df, tpq=tpq, taq=taq, y=y, group=group,
   if (min(x_prediction)<min(domain) | max(x_prediction)>max(domain))
     message(' * "x_prediction" requested is outside the range of dates observed in the data')
 
-  # now permutates
+  ## permutations begins
 
   # because we're worth it, add a progress bar
   message(" * launching ", k, " permutations")
@@ -111,9 +116,9 @@ quake_uniform <- function(df, tpq=tpq, taq=taq, y=y, group=group,
                     }
   )
 
-
+  ## final polish
+  # add a permutation index and bind all rows
   res <- res %>%
-    # add a permutation index and bind all rows
     purrr::imap_dfr(~dplyr::mutate(.x, k=.y)) %>%
     # cosmetics: put the k as first column
     dplyr::relocate(k, group)
