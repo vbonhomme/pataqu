@@ -22,8 +22,9 @@
 #' See [animals]. This is obtained with:
 #' ```
 #' set.seed(2329)
-#' animals_q <-  quake_uniform(animals, tpq, taq, value, k=20, group=taxa) %>%
-#'   dplyr::filter(x_new < 100, x_new > -100)
+#' animals_q <-  animals %>%
+#' dplyr::filter(tpq>-100, taq<100) %>%
+#' quake_uniform(tpq, taq, value, k=20, group=taxa)
 #'```
 #'
 "animals_q"
