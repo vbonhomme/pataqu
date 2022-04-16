@@ -4,10 +4,14 @@
 \alias{spaghetti}
 \title{Spaghetti plot after permutations}
 \usage{
-spaghetti(x, ...)
+spaghetti(df, x = x_new, y = y, group, ...)
 }
 \arguments{
-\item{x}{the result of a permutation function}
+\item{df}{\code{\link[=tibble]{tibble()}} the result of a permutation function}
+
+\item{x, y}{colnames for x and y columns (\code{x_new}/\code{y} by default)}
+
+\item{group}{colnames for grouping column (optionnal)}
 
 \item{...}{additional parameters to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}}
 }
@@ -16,16 +20,26 @@ ggplot2 primer on the result of \link{quake} for displaying the results of permu
 This allows inspecting the effect of \link{predictor}s.
 }
 \examples{
+spaghetti(animals_q, x=x_new, y=value, group=taxa)
+
+# of course you can filter this:
 animals_q \%>\%
-spaghetti()
+  dplyr::filter(taxa \%in\% c("frog", "cat")) \%>\%
+  spaghetti(y=value, group=taxa)
+
+# or plot a single one
+animals_q \%>\%
+  dplyr::filter(taxa == "mouse") \%>\%
+  spaghetti(y=value)
 
 # you can easily customize it
+# with regular ggplot2's grammar
+
 # color palette from https://www.colourlovers.com/palette/1473/Ocean_Five
 colors <- c("bird"="#00A0B0","cat"="#CC333F", "frog"="#CBE86B", "mouse"="#EDC951")
-library(ggplot2)
+# if you library(ggplot2) you won't need all these 'ggplot2::'
 animals_q \%>\%
-spaghetti(alpha=0.5, size=0.1) +
-  scale_color_manual(values=colors) +
-  xlab("year") + ylab("value of interest") +
-  guides(colour=guide_legend("taxa", override.aes=list(alpha=1, size=2)))
+  spaghetti(group=taxa, y=value, alpha=0.8, size=0.5) +
+  ggplot2::scale_color_manual(values=colors) +
+  ggplot2::labs(title="al dente", x="year", y="value of interest")
 }
