@@ -25,6 +25,24 @@
     <loc>https://vbonhomme.github.io/pataqu/reference/animals_q.html</loc>
   </url>
   <url>
+    <loc>https://vbonhomme.github.io/pataqu/reference/bin.html</loc>
+  </url>
+  <url>
+    <loc>https://vbonhomme.github.io/pataqu/reference/comparison_testers.html</loc>
+  </url>
+  <url>
+    <loc>https://vbonhomme.github.io/pataqu/reference/cutter.html</loc>
+  </url>
+  <url>
+    <loc>https://vbonhomme.github.io/pataqu/reference/df_g.html</loc>
+  </url>
+  <url>
+    <loc>https://vbonhomme.github.io/pataqu/reference/df_u.html</loc>
+  </url>
+  <url>
+    <loc>https://vbonhomme.github.io/pataqu/reference/fitting.html</loc>
+  </url>
+  <url>
     <loc>https://vbonhomme.github.io/pataqu/reference/index.html</loc>
   </url>
   <url>
@@ -34,10 +52,7 @@
     <loc>https://vbonhomme.github.io/pataqu/reference/pipe.html</loc>
   </url>
   <url>
-    <loc>https://vbonhomme.github.io/pataqu/reference/predictor.html</loc>
-  </url>
-  <url>
-    <loc>https://vbonhomme.github.io/pataqu/reference/quake_uniform.html</loc>
+    <loc>https://vbonhomme.github.io/pataqu/reference/quake.html</loc>
   </url>
   <url>
     <loc>https://vbonhomme.github.io/pataqu/reference/shake.html</loc>
@@ -46,10 +61,7 @@
     <loc>https://vbonhomme.github.io/pataqu/reference/spaghetti.html</loc>
   </url>
   <url>
-    <loc>https://vbonhomme.github.io/pataqu/reference/synchrony.html</loc>
-  </url>
-  <url>
-    <loc>https://vbonhomme.github.io/pataqu/reference/synchrony_testers.html</loc>
+    <loc>https://vbonhomme.github.io/pataqu/reference/test.html</loc>
   </url>
   <url>
     <loc>https://vbonhomme.github.io/pataqu/reference/tidyeval.html</loc>

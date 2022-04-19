@@ -156,14 +156,12 @@
 <span class="va">gg_mid</span> <span class="op"><a href="https://ggplot2.tidyverse.org/reference/gg-add.html" class="external-link">%+%</a></span> <span class="va">animals2</span></code></pre></div>
 <p><img src="intro_files/figure-html/gg_mid_animals2-1.png" width="700"></p>
 <p>Same same but different.</p>
-<p>The code used above is exactly what <code>shake_uniform</code> is made of behind the curtain<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;check by yourself and type &lt;code&gt;&lt;a href="../reference/shake.html"&gt;pataqu::shake_uniform&lt;/a&gt;&lt;/code&gt; (no brackets) in the console&lt;/p&gt;'><sup>3</sup></a>.</p>
-<p>pataqu generalizes this idea with a little decoration around this pattern.</p>
-<p>The mother function is We will simulate 5 new datasets with randomized datations. The true dates can be anytime between ptq and taq. We use <code>quake_uniform</code>.</p>
+<p>The code used above is exactly what <code>shake_uniform</code> is made of behind the curtain<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;check by yourself and type &lt;code&gt;&lt;a href="../reference/shake.html"&gt;pataqu::shake_uniform&lt;/a&gt;&lt;/code&gt; (no brackets) in the console&lt;/p&gt;'><sup>3</sup></a>. Have a look to the different shakers with <code><a href="../reference/shake.html">?shake</a></code></p>
+<p>pataqu generalizes this idea with a decoration around this pattern.</p>
+<p>The mother function for doing permutations is <code>quake</code>. We will simulate 5 new datasets with randomized datations. We want to use <code>shake_uniform</code> for which we need to specify the column for <code>tpq</code> and <code>taq</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">a_q</span> <span class="op">&lt;-</span> <span class="va">animals</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="../reference/quake_uniform.html">quake_uniform</a></span><span class="op">(</span>tpq<span class="op">=</span><span class="va">tpq</span>, taq<span class="op">=</span><span class="va">taq</span>, y<span class="op">=</span><span class="va">value</span>, k<span class="op">=</span><span class="fl">5</span>, group<span class="op">=</span><span class="va">taxa</span><span class="op">)</span>
-<span class="co">#&gt;  * grouping on taxa</span>
-<span class="co">#&gt;  * working on a temporal sequence of 30 steps</span>
+<code class="sourceCode R"><span class="va">a_q</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/quake.html">quake</a></span><span class="op">(</span><span class="va">animals</span>, k<span class="op">=</span><span class="fl">5</span>, shaker<span class="op">=</span><span class="va">shake_uniform</span>, min<span class="op">=</span><span class="va">tpq</span>, max<span class="op">=</span><span class="va">taq</span><span class="op">)</span>
+<span class="co">#&gt;  * quake animals using shake_uniform</span>
 <span class="co">#&gt;  * launching 5 permutations</span></code></pre></div>
 <!-- <!-- -->
 <!-- Let's have a look to the results: -->
