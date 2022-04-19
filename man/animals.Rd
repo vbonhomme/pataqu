@@ -3,7 +3,7 @@
 \docType{data}
 \name{animals}
 \alias{animals}
-\title{Toy dataset of archaeological measurements}
+\title{Dataset of archaeological measurements with terminus post and ante quem dating}
 \format{
 A data frame with 5533 rows and 6 variables:
 \itemize{

@@ -1,4 +1,4 @@
-#' Toy dataset of archaeological measurements
+#' Dataset of archaeological measurements with terminus post and ante quem dating
 #'
 #' This is a real but "anonymized" dataset of archaeological data.
 #'
@@ -23,9 +23,41 @@
 #' ```
 #' set.seed(2329)
 #' animals_q <-  animals %>%
-#' dplyr::filter(tpq>-100, taq<100) %>%
-#' quake_uniform(tpq, taq, value, k=20, group=taxa)
+#'   dplyr::filter(tpq>-100, taq<100) %>%
+#'   quake(k=20, shaker=shake_uniform, tpq, taq)
+#' usethis::use_data(animals_q, overwrite=TRUE)
 #'```
 #'
 "animals_q"
 
+#' Toy dataset with terminus ante and post quem dating
+#'
+#' Only used for examples
+#'
+#' This is obtained with:
+#' ```
+# set.seed(2329)
+# df_u <- tibble::tibble(tpq  = round(runif(8, -100, 100)), # random tpq
+#                        taq  = tpq+round(runif(8, 5, 50)), # taq based tpq+random
+#                        species = rep(c("fox", "hound"), each=4), # dummy grouping
+#                        site = rep(letters[1:2], each=2, times=2), # dummy sites
+#                        mes  = c(1:4, 4:1) + runif(8, -0.5, 0.5)) # dummy value of interest
+# usethis::use_data(df_u, overwrite=TRUE)
+#' ````
+"df_u"
+
+#' Toy dataset with centered/interval dating
+#'
+#' Only used for examples
+#'
+#' This is obtained with:
+#' ```
+#' set.seed(2329)
+#' df_g <- tibble::tibble(c14  = round(runif(8, -100, 100)), # best prediction
+#'                        sd1   = round(runif(8, 5, 20)),     # one sd
+#'                        species = rep(c("fox", "hound"), each=4), # dummy grouping
+#'                         site = rep(letters[1:2], each=2, times=2), # dummy sites
+#'                        mes  = c(1:4, 4:1) + runif(8, -0.5, 0.5))
+#'usethis::use_data(df_g, overwrite=TRUE)
+#' ```
+"df_g"

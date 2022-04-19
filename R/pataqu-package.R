@@ -8,7 +8,8 @@ NULL
 # to cope with "no visible binding for global variable"
 # and the use of preformatted tibbles
 globalVariables(c("taq", "tpq", "sd", "mean", "x_new", "group", "g", "k", "y",
-                  "g1", "g2", "pw", "y1", "y2", "data", "data1", "data2"))
+                  "g1", "g2", "pw", "y1", "y2", "data", "data1", "data2",
+                  "adj_r2", "median", "mod", "rse", "runif", "s", "x", "x_pred", "y_pred"))
 
 
 # Gathered here rather than in standalone .R files in /R
