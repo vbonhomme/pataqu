@@ -4,7 +4,7 @@
 \alias{bin}
 \title{Bin}
 \usage{
-bin(df, y = y, x = x_new, by = NULL, fun = stats::median, x_bin, k = k)
+bin(df, y = y, x = x_new, by = NULL, fun = stats::median, k = k)
 }
 \arguments{
 \item{df}{\code{\link[=tibble]{tibble()}} typically returned by \code{\link[=quake]{quake()}}}
