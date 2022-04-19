@@ -94,15 +94,14 @@ gg_mid %+% animals2
 
 Same same but different.
 
-The code used above is exactly what `shake_uniform` is made of behind the curtain^[check by yourself and type `pataqu::shake_uniform` (no brackets) in the console].
+The code used above is exactly what `shake_uniform` is made of behind the curtain^[check by yourself and type `pataqu::shake_uniform` (no brackets) in the console]. Have a look to the different shakers with `?shake`
 
-pataqu generalizes this idea with a little decoration around this pattern.
+pataqu generalizes this idea with a decoration around this pattern.
 
-The mother function is
-We will simulate 5 new datasets with randomized datations. The true dates can be anytime between ptq and taq. We use `quake_uniform`.
+The mother function for doing permutations is `quake`.
+We will simulate 5 new datasets with randomized datations. We want to use `shake_uniform` for which we need to specify the column for `tpq` and `taq`.
 ```{r quake1}
-a_q <- animals %>% 
-  quake_uniform(tpq=tpq, taq=taq, y=value, k=5, group=taxa)
+a_q <- quake(animals, k=5, shaker=shake_uniform, min=tpq, max=taq)
 ```
 <!-- <!-- -->
 <!-- Let's have a look to the results: -->

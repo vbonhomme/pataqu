@@ -3,38 +3,91 @@
 \name{shake}
 \alias{shake}
 \alias{shake_uniform}
+\alias{shake_uniform_within}
 \alias{shake_gaussian}
+\alias{shake_gaussian_within}
 \title{Generate new x values}
 \usage{
-shake_uniform(x)
+shake_uniform(x, min, max)
 
-shake_gaussian(x)
+shake_uniform_within(x, min, max, within)
+
+shake_gaussian(x, mean, sd)
+
+shake_gaussian_within(x, mean, sd, within)
 }
 \arguments{
-\item{x}{\code{\link[=tibble]{tibble()}} typically obtained by permutations}
+\item{x}{\code{\link[=tibble]{tibble()}}}
+
+\item{min, max}{colnames to pass to \code{\link[stats:Uniform]{stats::runif()}} (\verb{shake_uniform_*})}
+
+\item{within}{colname to define which levels share new x values (\verb{*_within} variants)}
+
+\item{mean, sd}{colnames to pass to \code{\link[stats:Normal]{stats::rnorm()}} (\verb{shake_gaussian_*})}
 }
 \value{
-a 'shaked'  \code{\link[=tibble]{tibble()}}
+a 'shaken' \code{\link[=tibble]{tibble()}} with an additional \code{x_new} column
 }
 \description{
-Used internally for each permutation to generate new x values.
-Different shakers are available depending on the type of
-uncertainties you have.
+Used internally by \code{\link[=quake]{quake()}} to generate new x values. Different flavours (\verb{shake_*}) exist
+depending the type of uncertainties you have. \verb{*_within} variants allow to share new values
+within a level.
 }
 \details{
-expects \code{tpq}, \code{taq} colnames for \code{shake_uniform},
-and \code{mean}, \code{sd} for \code{shake_gaussian}
+\code{uniform} considers that the \emph{actual} x can be anytime between two temporal bounds.
+This is typically the case for \verb{ante quem} data.
+
+\code{gaussian} considers that the \emph{actual} x is centered on a value but with an associated error.
+You can think of C^14 dating which is provided as and estimate and a standard deviation to expect
+around it.
+
+For \verb{shake_uniform_*}, \code{min}/\code{max} correspond to \code{tpq}/\code{taq} respectively.
+For \verb{shake_gaussian_*}, \code{mean}/\code{sd} correspond to the single (best) x and its standard deviation.
 }
 \section{Functions}{
 \itemize{
-\item \code{shake_uniform}: uniform distribution
+\item \code{shake_uniform}: generate new x values using uniform distribution
 
-\item \code{shake_gaussian}: gaussian distribution
+\item \code{shake_uniform_within}: shake_uniform within a group
+
+\item \code{shake_gaussian}: generate new x values using gaussian distribution
+
+\item \code{shake_gaussian_within}: shake_gaussian within a group
 }}
 
 \examples{
 set.seed(2329) # replicability
-tibble::tibble(tpq=c(-50, 100), taq=c(50, 200)) \%>\% shake_uniform()
-tibble::tibble(mean=c(0, 100), sd=c(5, 20)) \%>\% shake_gaussian()
+# we will use builtin dummy df_u and df_g
+
+# show uniform shaking
+df_u # 'unshaken' data
+df_u \%>\% shake_uniform(tpq, taq)  # new x values bounded between each tpq/taq
+df_u \%>\% shake_uniform(tpq, taq)  # same idea, different values
+
+# you can decide that new values must be stratified per site
+# we create a df_u variant with equal tpq and taq per site (otherwise makes no sense)
+df_u \%>\%
+  dplyr::group_by(site) \%>\%
+  dplyr::mutate(tpq=tpq[1], taq=taq[1]) \%>\% # first value defines all others
+  dplyr::ungroup() -> df_u_site
+
+# now compare
+df_u_site \%>\% shake_uniform(tpq, taq)
+df_u_site \%>\% shake_uniform_within(tpq, taq, within=site) # equal x_new within site
+
+# gaussian shaking now
+df_g # unshaken data
+df_g \%>\% shake_gaussian(c14, sd1) # x_new is centered on c14 with gaussian noise (sd=sd1)
+df_g \%>\% shake_gaussian(c14, sd1) # same idea, different values
+
+# stratified version
+# same approach as above, inherit from 1st value,
+# to make a tibble that makes sense for *_within variant
+df_g \%>\%
+  dplyr::group_by(site) \%>\%
+  dplyr::mutate(c14=c14[1], sd1=sd1[1]) \%>\%
+  dplyr::ungroup() -> df_g_site
+
+df_g_site \%>\% shake_gaussian_within(c14, sd1, site)
 
 }
