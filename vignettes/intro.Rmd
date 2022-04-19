@@ -1,7 +1,9 @@
 ---
 title: "Introducing pataqu"
 author: Vincent Bonhomme, Allowen Evin
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{intro}
   %\VignetteEngine{knitr::rmarkdown}
@@ -15,19 +17,25 @@ knitr::opts_chunk$set(
 )
 ```
 
-pataqu aims at visualizing and testing the effect of uncertainties on x values (ie the independant variable). This vignette quickly presents the rationale of the package then jump to a case study.
+This vignette quickly presents the rationale of the package then jump to a case study. If you are reading it within R/RStudio, note that pataqu has a dedicated website that gathers the doc with examples, vignettes, news, etc.
+
+> http://vbonhomme.github.io/pataqu
 
 ## Rationale
 
-### Sources of uncertainties
+#### Sources of uncertainties
 We chiefly had in mind archaeological data which dating of remains are often temporally bounded between two certain events, named _terminus post/ante quem_, further abbreviated tpq and taq^[hence the package name which is also a delicate pun, in French]. The tpq is the earliest date, the taq the latest.
 
 The _real_ event may have happened anytime between these two boundaries with a flat, uniform, density of probability along the interval.
 
 We can also think of radiocarbon dating, which comes with a prediction and a confidence interval (say $\mu ± \sigma$). But here the dating differ and the _real_ event has a  density of probability of gaussian nature with parameters $\mu$ and $\sigma$.
 
-### Consequences and how to inspect them
-Whatever the source of the uncertainty, the graphics, tests and overall stories we can obtain from data may well be affected. How robust your lovely trends to temporal uncertainties?
+More generally, we will show how to deal with arbitrary uncertainties on x, whenever you have an idea on how it varies.
+
+#### Consequences and how to inspect them
+Whatever the source of the uncertainty on x, the graphics, tests and overall stories we can obtain from data may well be affected.
+
+How robust is your lovely story regarding x uncertainties?
 
 pataqu aims at visualizing and testing this using permutations. This is not the only way to do it but in our view it has the merit to only use information contained in the data itself.
 
@@ -39,7 +47,7 @@ The idea is:
 
 ## Case study: taq and ptq
 
-We will load the package and also use `dplyr` and `ggplot2` from the [tidyverse](tidyverse.org/). Overall, if you `library(tidyverse)` you should not need much more^[and typically you will not need to `dplyr::` or `ggplot2::` like what you have in function examples.]
+We will load the package and also use `dplyr` and `ggplot2` from the [tidyverse](tidyverse.org/). More generally, if you `library(tidyverse)` you should not need much more and typically you will not need to `dplyr::` or `ggplot2::` like what you have in function examples. We treated well the examples so that they are meaningful.
 
 ```{r setup, message=FALSE, }
 library(dplyr)
@@ -47,9 +55,9 @@ library(ggplot2)
 library(pataqu)
 ```
 
-### `animals` dataset
+#### `animals` dataset
 
-This dataset is made of real (and unpublished) data where researchers measured a `value` of interest on archaeological remains, in several `sites` (with `us` or stratigraphical units in them), dated with `tpq` and `taq`. The remains belonged to four `taxa`.
+This dataset is made of real (and still unpublished) data where researchers measured a `value` of interest on archaeological remains, in several `sites` (with `us` or stratigraphical units in them), dated with `tpq` and `taq`. The remains belonged to four `taxa`.
 
 ```{r animals_head}
 head(animals)
@@ -61,8 +69,9 @@ How would we treat that? We could decide to display the full interval and see wh
 # pure cosmetics for lighter graphs
 theme_set(theme_minimal())
 
-animals %>% ggplot() +
- geom_errorbarh(aes(xmin=tpq, xmax=taq, y=value, col=taxa), size=0.2, alpha=0.5)
+ggplot(animals) +
+  aes(xmin=tpq, xmax=taq, y=value, col=taxa) +
+  geom_errorbarh(size=0.2, alpha=0.5)
 ```
 
 What a mess! We could try to add a mid point and add a smoother on top of them.
@@ -76,57 +85,204 @@ animals %>%
   geom_smooth(method="loess", formula="y~x", se=FALSE) -> gg_mid
 gg_mid
 ```
-We now are able to see some trends but we lost the uncertainty on x in the meantime.
+We can now see some trends but we lost the uncertainty on x in the meantime.
 The graph before may have also been the one below, with the same likelihood.
 
-We take animals and simply draw other `x_new` values, not on the midpoint, somewhere between the tpq and taq of each line. We use `set.seed` for the sake of replicability only.
+We take animals and simply draw other `x_new` values, not on the midpoint but somewhere between the tpq and taq of each observation We use `set.seed` for the sake of replicability only.
 
 ```{r gg_mid_animals2}
 set.seed(2329)
 # lets draw new x values
 animals2 <- animals %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(x_new=stats::runif(n=1, min=tpq, max=taq)) %>%
-    dplyr::ungroup()
+  dplyr::rowwise() %>%
+  dplyr::mutate(x_new=stats::runif(n=1, min=tpq, max=taq)) %>%
+  dplyr::ungroup()
 # and redo gg_mid graph with this new tibble
 gg_mid %+% animals2
 ```
 
 Same same but different.
 
-The code used above is exactly what `shake_uniform` is made of behind the curtain^[check by yourself and type `pataqu::shake_uniform` (no brackets) in the console]. Have a look to the different shakers with `?shake`
+#### `shake`: generates a new dataset
+The code used above is exactly what `shake_uniform` is made of behind the curtain. You can check by yourself and type `pataqu::shake_uniform` (no brackets) in the console. Have a look to the different shakers with `?shake`.
 
-pataqu generalizes this idea with a decoration around this pattern.
-
-The mother function for doing permutations is `quake`.
-We will simulate 5 new datasets with randomized datations. We want to use `shake_uniform` for which we need to specify the column for `tpq` and `taq`.
-```{r quake1}
-a_q <- quake(animals, k=5, shaker=shake_uniform, min=tpq, max=taq)
+```{r shake, results='asis'}
+animals
+shake_uniform(animals, min=tpq, max=taq)
 ```
-<!-- <!-- -->
-<!-- Let's have a look to the results: -->
-<!-- ```{r} -->
-<!-- a_q -->
-<!-- # spaghetti(a_q) -->
-<!-- ``` -->
-<!-- One can now test _globally_ when patterns between taxa differ: -->
 
-<!-- ```{r} -->
-<!-- res_global <- a_q %>% synchrony() -->
-<!-- res_global %>% filter(p<1e-4) -->
-<!-- ``` -->
 
-<!-- But also test for pairwise differences: -->
-<!-- ```{r} -->
-<!-- res <- a_q %>% synchrony_pw() -->
-<!-- head(res) -->
-<!-- ``` -->
+pataqu generalizes this idea with decoration around this pattern.
 
-<!-- And we can also check only those that differ: -->
+#### `quake`: generates many datasets
+You can do several shakes at once with the function `quake` which is the real entry point of analyses with pataqu.
 
-<!-- ```{r} -->
-<!--  res %>% filter(p<0.0001) -->
-<!-- ``` -->
+Here we will simulate only 5 new datasets for the sake of speed but you can generate thousands of them^[On my 2013 Mac Book Pro it takes 15 sec. to quake animals and have half a million observations, so this is reasonnably fast] with randomized datations.
 
-<!-- --> -->
+`quake` uses one of the shakers to generate entire datasets, possibly thousands of them. Here, we have `tpq` and `taq` dating so we will use `shake_uniform` and we have to specify the name of the columns^[Arguments names (here `min` and `max` can be omitted as long as they come in the order expected by `shake_uniform` but I think it is a bad idea and not so painful to type].
+
+```{r quake1}
+many_animals <- quake(animals, k=5, shaker=shake_uniform, min=tpq, max=taq)
+```
+
+Let's have a look to the results:
+```{r many_animals_print}
+many_animals
+```
+We know have `r nrow(many_animals)` observations. Another way to look at them would be to take the first observations in each permutation and for each species:
+
+```{r first_slices_k}
+many_animals %>% 
+  group_by(taxa, k) %>% 
+  slice_head(n=1)
+```
+Observe that the new column `x_new` varies for each permutation but is still strictly bounded by `tpq` and `taq`. 
+
+Sometimes you may not want as much randomness. Perhaps your new `x_new` should only be allowed to vary _within_ stratigraphical units. That's the job of `shake_*_within` which expects a `by` argument, so here again, we pass `quake` with it.
+
+```{r many_animals_within}
+animals %>% 
+  slice(1:10) %>% # we pick only 10 obs (only for speed here)
+  quake(2, shake_uniform_within, tpq, taq, within=us)
+```
+Note that lines `c(1, 3)` in one hand, and `c(6, 7)` in the other share for the first iteration (and all others), the same `x_new` because they come from the same `us`.
+
+#### `spaghetti0` visualizing trend after `quake`
+Let's say you are happy with the straightforward `geom_smooth` from ggplot2. `spaghetti0` helps you to do this _directly_ after `quake`.
+
+```{r spaghetti0}
+spaghetti0(many_animals, y=value, by=taxa)
+```
+
+The name of the function should be clear now but why the trailing '0' to it? You're right, there is a `spaghetti` full stop but it comes after an intermediate modelling step we will see now.
+
+#### To bin or not to bin
+
+You have many new x values now but how about having them fixed on x values of interest? Here, we can think of slicing the temporal range into centuries, or 20 groups of same size and then get estimates, for each permutations of the value of interest.
+
+Such discretization of a continous data may seen paradoxical when we are precisely randomizing x. It is neither mandatory (if you're happy with `spaghetti0`) nor always desirable. Some of its merits and the motivation behind is detailed in `?fitting` (and all `?fit_*` function since they share the same page).
+
+That being said, to do such discretizations you have two different approaches:
+
+1. define bins, grab data in them and then summarize them, eg using `median`, `mean`, etc.
+
+2. fit regression models on full range and then use them to predict y values using a common sequence of x values.
+
+The first approach is the purpose of `bin`: the second is the purpose of `fit_*` functions.
+
+##### `bin`: bins values and summarize
+
+From now on, we will shift to `animals_q` which is a built it dataset of `animals` with 20 permutations and with dates ranging between 100 BC and 100 AD (ie -100 to 100). See `?animals_q`.
+
+`bin` discretizes x values using variations on `cut` yet we use the more convenient `cut_number`, `cut_width` and `cut_interval` that comes with `ggplot2`
+
+Let's bin y values (still names `value`) every 50 years and get the median per taxa: (todo implement this)
+
+```{r}
+animals_binned <- bin(animals_q, y=value, by=taxa, fun=median)
+animals_binned
+```
+
+Note that `x_bin` is now a factor. The natural graphical display is a good old boxplot:
+
+```{r}
+ggplot(animals_binned) +
+  aes( x_bin, y_bin, fill=taxa) +
+  geom_boxplot(outlier.size = 0.2) +
+  theme(axis.text.x = element_text(angle=45, h=1))
+```
+
+We will see how to test that in the next section.
+
+##### `fit_*`: fits a regression model and predict
+
+You can also choose to define a regression model for each permutation and use it to predict fixed values. In other words, to gain more control over what `spaghetti0` offered you before, almost for free.
+
+Here come the `fit_*` family:
+(todo: handle x_pred, same refinement as above for bin)
+
+```{r}
+animals_gam <- fit_gam(animals_q, y=value, by=taxa, x_pred=seq(-100, 100, 10))
+animals_gam
+
+```
+
+Here finally comes `spaghetti` that displays such pre-digested data. In ggplot2 terms, `spaghetti` uses `geom_line` where `spaghetti0` uses `geom_smooth`.
+
+I know you want more graphs and less blabla (because you know you can find it in `?spaghetti` anyway):
+
+```{r}
+spaghetti(animals_gam, by=taxa)
+```
+
+In the same family, you also have `fit_loess` too and the good old `fit_lm` members. To all of them you can refine the formula to stick to what you want to model. We will try something like : $value ~ x^3 + x$ with no intercept.
+
+```{r}
+animals_origin <- animals_q %>% 
+  fit_lm(y=value, 
+         formula_rhs = I(x_new^3) + x_new - 1,
+         by=taxa,
+         x_pred=seq(-100, 100, 10), 
+         .keep_mod = TRUE)
+```
+
+The argument `formula_rhs` stands for "right hand side" and use the classical `formula` mini-grammar.
+
+First, let's plot it:
+
+```{r}
+spaghetti(animals_origin, by=taxa)
+```
+
+It's likely pure nonsense here but we do it anyway. Do not try this at lab without statistical safety belts.
+
+Perhaps, you have noticed the `.keep_mod` argument above and the additional columns in `animals_origins`^[yes, we expect you to copy-paste every single command ;-)]:
+
+```{r}
+animals_origin
+```
+When passing `fit_*` functions with `.keep_mod=TRUE` we do two things: keep the original models, add a single meaningful index on the quality of the model (see `?fitting`, `adj.r2` for `gam` and `lm`; `rse` for `loess`).
+
+You need a little bit data handling but you can do nice things with them:
+```{r}
+# first remove duplicates
+lms <- animals_origin %>% group_by(k, taxa) %>% slice(1) %>% ungroup()
+
+# very low r2 everywhere: pure nonsense confirmed
+ggplot(lms) + 
+  aes(taxa, adj_r2, col=taxa) + 
+  geom_violin() + geom_jitter()
+
+# you could also access all components of $mod columns, use broom on it, etc. etc.
+```
+
+#### `test_*`: test for differences
+Whether you used the `bin` or `fit` pathway you have now slices of x (eg a `factor`) and y values^[not sure testing after a predict is a very orthodox idea though]. We will call bacl `animals_binned` from above.
+
+```{r}
+animals_binned
+
+```
+
+One can now test _globally_ when patterns between taxa differ:
+
+```{r}
+test_globally(animals_binned, x=x_bin, y=y_bin, by=taxa)
+```
+
+And test for pairwise differences:
+```{r, warning=FALSE}
+test_pairwise(animals_binned, x=x_bin, y=y_bin, by=taxa)
+```
+
+You may have `warnings`related to ties. See `?wilcox.test`
+
+#### Finally
+This vignette shows most of what pataqu can help you at, yet most of the time presenting and discussing a `spaghetti0` plot would be, in our humble opinions, both enough and parcimonious.
+
+With that it mind, only two functions would be needed to get your results:
+```{r}
+quake(animals, k=10, shake_uniform, tpq, taq) %>% 
+  spaghetti0(y=value, by=taxa)
+```
 
