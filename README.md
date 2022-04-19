@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# pataqu [<img src="inst/figures/pataqu.png" width = "175" height = "200" align="right" />]()
+# pataqu [<img src="man/figures/pataqu.png" width = "175" height = "200" align="right" />]()
 
 <!-- badges: start -->
 <!--[![CRAN status](https://www.r-pkg.org/badges/version/pataqu)](https://CRAN.R-project.org/package=pataqu)-->
