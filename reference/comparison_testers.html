@@ -91,16 +91,16 @@ and <a href="https://rdrr.io/r/stats/aov.html" class="external-link">stats::aov<
 <span class="r-in">                   y<span class="op">=</span><span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">20</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">wilcox_p</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02880556</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.7959363</span>
 <span class="r-in"><span class="fu">aov_p</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.05743943</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.8848667</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># on &gt;2 groups</span></span>
 <span class="r-in"><span class="va">x</span><span class="op">$</span><span class="va">g</span><span class="op">[</span><span class="fl">15</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"c"</span></span>
 <span class="r-in"><span class="fu">kruskal_p</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.08741024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.95327</span>
 <span class="r-in"><span class="fu">aov_p</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1693714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9745148</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
