@@ -1,6 +1,6 @@
 #' Discretise numeric x values into categorical
 #'
-#' Thin wrappers around [ggplot2::cut_interval()]() and friends.
+#' Thin wrappers around [ggplot2::cut_interval()] and friends.
 #' Useful for defining fixed x values for [fitting] functions.
 #'
 #' Here, columns of interest may be passed directly.

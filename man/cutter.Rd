@@ -31,7 +31,7 @@ cutter_to_seq(x)
 factor with appropriate levels
 }
 \description{
-Thin wrappers around \url{ggplot2::cut_interval()} and friends.
+Thin wrappers around \code{\link[ggplot2:cut_interval]{ggplot2::cut_interval()}} and friends.
 Useful for defining fixed x values for \link{fitting} functions.
 }
 \details{
