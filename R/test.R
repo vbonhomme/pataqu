@@ -125,7 +125,7 @@ wilcox_p <- function(df){
   if ((nrow(df)<2) | length(unique(df$g))<2)
     return(NA_real_)
   # otherwise wilcox this and return p.value
-  stats::wilcox.test(y~g, data=df)$p.value
+  stats::wilcox.test(y~g, data=df, digits.rank = 7)$p.value
 }
 
 #' @describeIn comparison_testers kruskal's test for global differences

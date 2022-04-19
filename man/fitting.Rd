@@ -5,7 +5,7 @@
 \alias{fit_lm}
 \alias{fit_gam}
 \alias{fit_loess}
-\title{Fit each permuations using various regression}
+\title{Fit each permuations using various regression models}
 \usage{
 fit_lm(
   df,

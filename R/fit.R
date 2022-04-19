@@ -1,4 +1,4 @@
-#' Fit each permuations using various regression
+#' Fit each permuations using various regression models
 #'
 #' Useful for boiling down the multiple permutations after [quake()].
 #'

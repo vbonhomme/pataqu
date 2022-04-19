@@ -14,7 +14,7 @@
 #' animals_q %>% bin(y=value, fun=mean)
 #' @export
 bin <- function(df, y=y, x=x_new, by=NULL, fun=stats::median,
-                      # x_bin,
+                      x_bin,
                       k=k){
   # todo implement
   # if (missing(x_pred))
