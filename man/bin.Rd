@@ -4,28 +4,24 @@
 \alias{bin}
 \title{Bin}
 \usage{
-bin(
-  df,
-  y = y,
-  fun = stats::median,
-  by = NULL,
-  x_pred = cutter_number(df, 30, x_new),
-  k = k
-)
+bin(df, y = y, x = x_new, by = NULL, fun = stats::median, k = k)
 }
 \arguments{
 \item{df}{\code{\link[=tibble]{tibble()}} typically returned by \code{\link[=quake]{quake()}}}
 
-\item{y}{colname of the value of interest. Default to \code{y}.}
-
-\item{fun}{to use to summarise \code{y}}
+\item{y, x}{colnames to use. Default to \code{y}/\code{x_new}}
 
 \item{by}{colname for grouping structure (besides \code{k}). Default to \code{NULL}}
 
-\item{x_pred}{the sequence of x for which to predict new values after fitting}
+\item{fun}{to use to summarise \code{y}}
 
 \item{k}{colname for iteration . Default to \code{k}.}
 }
 \description{
 Bin and summarise without \link{fitting}
+}
+\examples{
+animals_q \%>\% bin(y=value, by=taxa, fun=mean)
+
+animals_q \%>\% bin(y=value, fun=mean)
 }
