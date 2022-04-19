@@ -25,13 +25,13 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
-pataqu uses permutationnal approach to deal with data that comes with uncertainties on x. 
+**pataqu** uses permutationnal approaches to deal with data that comes with uncertainties on x. 
 
-It it typically aimed at working with temporal data that are not exactly defined but comes with lower (and upper) bounds, also called [terminus ante (and post) quem](https://en.wikipedia.org/wiki/Terminus_post_quem). 
+Its approach originated when working with temporal data that are not exactly defined but comes with lower (and upper) bounds, also called [terminus ante (and post) quem](https://en.wikipedia.org/wiki/Terminus_post_quem). 
 
-It can also be used when dating, typically [radiocarbon dating](https://en.wikipedia.org/wiki/Radiocarbon_dating), comes with a confidence interval likely to affect interpretation.
+pataqu can also be used when dating comes with a confidence interval likely to affect interpretation, for instance [radiocarbon dating](https://en.wikipedia.org/wiki/Radiocarbon_dating),
  
-More generally, it is a permutationnal approach that allows to inspect both graphically and statistically the effects of x uncertainties.
+More generally, it allows to inspect both graphically and statistically the effects of x uncertainties.
 
 ## Installation
 
