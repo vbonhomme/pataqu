@@ -2,44 +2,85 @@
 % Please edit documentation in R/spaghetti.R
 \name{spaghetti}
 \alias{spaghetti}
+\alias{spaghetti0}
 \title{Spaghetti plot after permutations}
 \usage{
-spaghetti(df, x = x_new, y = y, group, ...)
+spaghetti(df, x = x_pred, y = y_pred, by, size = 0.2, ...)
+
+spaghetti0(
+  df,
+  x = x_new,
+  y = y,
+  by = NULL,
+  method = NULL,
+  formula = NULL,
+  se = FALSE,
+  size = 0.2,
+  ...
+)
 }
 \arguments{
 \item{df}{\code{\link[=tibble]{tibble()}} the result of a permutation function}
 
 \item{x, y}{colnames for x and y columns (\code{x_new}/\code{y} by default)}
 
-\item{group}{colnames for grouping column (optionnal)}
+\item{by}{colnames for grouping column (optional, default to \code{NULL})}
 
-\item{...}{additional parameters to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}}
+\item{size}{passed to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}/\code{\link[ggplot2:geom_smooth]{ggplot2::geom_smooth()}}}
+
+\item{...}{additional parameters to \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}/\code{\link[ggplot2:geom_smooth]{ggplot2::geom_smooth()}} (eg \code{alpha})
+for \code{spaghetti}/\code{spaghetti0}, respectively}
+
+\item{method, formula}{passed \code{\link[ggplot2:geom_smooth]{ggplot2::geom_smooth()}}, and defaults to \code{NULL} so that
+we let \code{ggplot2} pick default method when not specified}
+
+\item{se}{passed to \code{\link[ggplot2:geom_smooth]{ggplot2::geom_smooth()}}, default to \code{FALSE} to only draw lines}
 }
 \description{
-ggplot2 primer on the result of \link{quake} for displaying the results of permutations.
-This allows inspecting the effect of \link{predictor}s.
+Display the result of permutations
 }
+\details{
+This ggplot2 primer allows inspecting the effect of \url{fitting}
+functions (\code{spaghetti}) or raw data (\code{spaghetti0}).
+}
+\section{Functions}{
+\itemize{
+\item \code{spaghetti}: after quake and fit
+
+\item \code{spaghetti0}: straight after quake
+}}
+
 \examples{
-spaghetti(animals_q, x=x_new, y=value, group=taxa)
+## spaghetti0 it the plotting function to use right after quake:
 
-# of course you can filter this:
-animals_q \%>\%
-  dplyr::filter(taxa \%in\% c("frog", "cat")) \%>\%
-  spaghetti(y=value, group=taxa)
+# general trend over permutations
+spaghetti0(animals_q, x=x_new, y=value, col="gold")
 
-# or plot a single one
-animals_q \%>\%
-  dplyr::filter(taxa == "mouse") \%>\%
-  spaghetti(y=value)
+# per taxa now
+spaghetti0(animals_q, x=x_new, y=value, by=taxa)
 
-# you can easily customize it
-# with regular ggplot2's grammar
+# you can choose other parameters for geom_smooth (if that makes sense)
+# for instance, here lm with no intercept
+spaghetti0(animals_q, x=x_new, y=value, by=taxa, method="lm", formula=y~x-1)
 
-# color palette from https://www.colourlovers.com/palette/1473/Ocean_Five
+# you can also customise this using some ggplot2 spice
+# note that if you library(ggplot2) you won't need all these ggplot2::
+#' # color palette from https://www.colourlovers.com/palette/1473/Ocean_Five
 colors <- c("bird"="#00A0B0","cat"="#CC333F", "frog"="#CBE86B", "mouse"="#EDC951")
-# if you library(ggplot2) you won't need all these 'ggplot2::'
-animals_q \%>\%
-  spaghetti(group=taxa, y=value, alpha=0.8, size=0.5) +
+spaghetti0(animals_q, x=x_new, y=value, by=taxa) +
   ggplot2::scale_color_manual(values=colors) +
   ggplot2::labs(title="al dente", x="year", y="value of interest")
+
+
+ ## spaghetti is intended for use _after_ fitting function
+ ## it does not call geom_smooth but geom_line directly
+
+ animals_f <- fit_gam(animals_q, y=value, by=taxa, x_pred=seq(-100, 100, 10))
+
+ # and the general behaviour is the same as fo spaghetti0 eg:
+
+ spaghetti(animals_f, by=taxa, alpha=0.5) +
+  ggplot2::scale_color_manual(values=colors) +
+  ggplot2::labs(title="on the full range", x="year", y="value of interest") +
+  ggplot2::guides(colour=ggplot2::guide_legend(override.aes=list(size=3, alpha=1)))
 }
