@@ -1,4 +1,33 @@
 url: https://vbonhomme.github.io/pataqu/
 template:
   bootstrap: 5
+  bootswatch: simplex
 
+reference:
+  - title: Shakers
+    desc: to generate new x values
+  - contents:
+    - starts_with("shake")
+    - quake
+  - title: Boil down permutations
+    desc:  to summarize using models or scalar descriptors values of interest on x slices
+  - contents:
+    - starts_with("fit")
+    - bin
+    - starts_with("cutter")
+  - title: Visualizes trends
+    desc: using ggplot2 primers
+  - contents:
+    - starts_with("spaghetti")
+  - title: Test for differences
+    desc: within x slices
+  - contents:
+    - starts_with("test")
+    - ends_with("_p")
+  - title: Datasets
+    desc: to play with pataqu functions
+  - contents:
+    - animals
+    - animals_q
+    - df_u
+    - df_g
