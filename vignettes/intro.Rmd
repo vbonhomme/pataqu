@@ -21,9 +21,9 @@ This vignette quickly presents the rationale of the package then jump to a case 
 
 > http://vbonhomme.github.io/pataqu
 
-## Rationale
+# Rationale
 
-#### Sources of uncertainties
+### Sources of uncertainties
 We chiefly had in mind archaeological data which dating of remains are often temporally bounded between two certain events, named _terminus post/ante quem_, further abbreviated tpq and taq^[hence the package name which is also a delicate pun, in French]. The tpq is the earliest date, the taq the latest.
 
 The _real_ event may have happened anytime between these two boundaries with a flat, uniform, density of probability along the interval.
@@ -32,7 +32,7 @@ We can also think of radiocarbon dating, which comes with a prediction and a con
 
 More generally, we will show how to deal with arbitrary uncertainties on x, whenever you have an idea on how it varies.
 
-#### Consequences and how to inspect them
+### Consequences and how to inspect them
 Whatever the source of the uncertainty on x, the graphics, tests and overall stories we can obtain from data may well be affected.
 
 How robust is your lovely story regarding x uncertainties?
@@ -45,7 +45,7 @@ The idea is:
 2. Display and/or test what you need
 3. Repeat many times and see what happens
 
-## Case study: taq and ptq
+# Case study: taq and ptq
 
 We will load the package and also use `dplyr` and `ggplot2` from the [tidyverse](tidyverse.org/). More generally, if you `library(tidyverse)` you should not need much more and typically you will not need to `dplyr::` or `ggplot2::` like what you have in function examples. We treated well the examples so that they are meaningful.
 
@@ -55,7 +55,7 @@ library(ggplot2)
 library(pataqu)
 ```
 
-#### `animals` dataset
+### `animals` dataset
 
 This dataset is made of real (and still unpublished) data where researchers measured a `value` of interest on archaeological remains, in several `sites` (with `us` or stratigraphical units in them), dated with `tpq` and `taq`. The remains belonged to four `taxa`.
 
@@ -103,10 +103,10 @@ gg_mid %+% animals2
 
 Same same but different.
 
-#### `shake`: generates a new dataset
+### `shake`: generates a new dataset
 The code used above is exactly what `shake_uniform` is made of behind the curtain. You can check by yourself and type `pataqu::shake_uniform` (no brackets) in the console. Have a look to the different shakers with `?shake`.
 
-```{r shake, results='asis'}
+```{r shake}
 animals
 shake_uniform(animals, min=tpq, max=taq)
 ```
@@ -114,7 +114,7 @@ shake_uniform(animals, min=tpq, max=taq)
 
 pataqu generalizes this idea with decoration around this pattern.
 
-#### `quake`: generates many datasets
+### `quake`: generates many datasets
 You can do several shakes at once with the function `quake` which is the real entry point of analyses with pataqu.
 
 Here we will simulate only 5 new datasets for the sake of speed but you can generate thousands of them^[On my 2013 Mac Book Pro it takes 15 sec. to quake animals and have half a million observations, so this is reasonnably fast] with randomized datations.
@@ -147,7 +147,7 @@ animals %>%
 ```
 Note that lines `c(1, 3)` in one hand, and `c(6, 7)` in the other share for the first iteration (and all others), the same `x_new` because they come from the same `us`.
 
-#### `spaghetti0` visualizing trend after `quake`
+### `spaghetti0` visualizing trend after `quake`
 Let's say you are happy with the straightforward `geom_smooth` from ggplot2. `spaghetti0` helps you to do this _directly_ after `quake`.
 
 ```{r spaghetti0}
@@ -156,7 +156,7 @@ spaghetti0(many_animals, y=value, by=taxa)
 
 The name of the function should be clear now but why the trailing '0' to it? You're right, there is a `spaghetti` full stop but it comes after an intermediate modelling step we will see now.
 
-#### To bin or not to bin
+### To bin or not to bin
 
 You have many new x values now but how about having them fixed on x values of interest? Here, we can think of slicing the temporal range into centuries, or 20 groups of same size and then get estimates, for each permutations of the value of interest.
 
@@ -170,7 +170,7 @@ That being said, to do such discretizations you have two different approaches:
 
 The first approach is the purpose of `bin`: the second is the purpose of `fit_*` functions.
 
-##### `bin`: bins values and summarize
+### `bin`: bins values and summarize
 
 From now on, we will shift to `animals_q` which is a built it dataset of `animals` with 20 permutations and with dates ranging between 100 BC and 100 AD (ie -100 to 100). See `?animals_q`.
 
@@ -194,7 +194,7 @@ ggplot(animals_binned) +
 
 We will see how to test that in the next section.
 
-##### `fit_*`: fits a regression model and predict
+### `fit_*`: fits a regression model and predict
 
 You can also choose to define a regression model for each permutation and use it to predict fixed values. In other words, to gain more control over what `spaghetti0` offered you before, almost for free.
 
@@ -256,7 +256,7 @@ ggplot(lms) +
 # you could also access all components of $mod columns, use broom on it, etc. etc.
 ```
 
-#### `test_*`: test for differences
+### `test_*`: test for differences
 Whether you used the `bin` or `fit` pathway you have now slices of x (eg a `factor`) and y values^[not sure testing after a predict is a very orthodox idea though]. We will call bacl `animals_binned` from above.
 
 ```{r}
@@ -277,7 +277,7 @@ test_pairwise(animals_binned, x=x_bin, y=y_bin, by=taxa)
 
 You may have `warnings`related to ties. See `?wilcox.test`
 
-#### Finally
+# Finally
 This vignette shows most of what pataqu can help you at, yet most of the time presenting and discussing a `spaghetti0` plot would be, in our humble opinions, both enough and parcimonious.
 
 With that it mind, only two functions would be needed to get your results:
