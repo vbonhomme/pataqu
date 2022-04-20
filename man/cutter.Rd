@@ -60,4 +60,10 @@ cutter_width(animals, 30, tpq, taq) \%>\% table()
 # the number of _different_ levels is not so diverse,
 # so that n=30 would fail with "Insufficient data values"
 # unlist(animals[, c("tpq", "taq")]) \%>\% table()
+
+# cutter_to_seq is helpful to pass x_bin/x_pred to bin/fit_* respectively
+# there is an example in ?bin that can be used to fit_* too
+# cutter_to_seq go back to numeric from factor levels:
+cutter_width(animals, 30, tpq, taq) \%>\% cutter_to_seq()
+
 }

@@ -176,12 +176,14 @@ From now on, we will shift to `animals_q` which is a built it dataset of `animal
 
 `bin` discretizes x values using variations on `cut` yet we use the more convenient `cut_number`, `cut_width` and `cut_interval` that comes with `ggplot2`
 
-Let's bin y values (still names `value`) every 50 years and get the median per taxa: (todo implement this)
+Let's bin y values (still names `value`) every 50 years and get the median per taxa:
 
 ```{r}
-animals_binned <- bin(animals_q, y=value, by=taxa, fun=median)
+animals_binned <- bin(animals_q, y=value, by=taxa, fun=median, x_bin=seq(-100, 100, 50))
 animals_binned
 ```
+
+If you need to define bins based on equal number of observations per group, on equal range or width, see `?cutter`.
 
 Note that `x_bin` is now a factor. The natural graphical display is a good old boxplot:
 
@@ -199,13 +201,13 @@ We will see how to test that in the next section.
 You can also choose to define a regression model for each permutation and use it to predict fixed values. In other words, to gain more control over what `spaghetti0` offered you before, almost for free.
 
 Here come the `fit_*` family:
-(todo: handle x_pred, same refinement as above for bin)
 
 ```{r}
 animals_gam <- fit_gam(animals_q, y=value, by=taxa, x_pred=seq(-100, 100, 10))
 animals_gam
 
 ```
+Just as for `bin` before, see `?cutter` should you want to define bins based on the number of observations in them, on width, etc.
 
 Here finally comes `spaghetti` that displays such pre-digested data. In ggplot2 terms, `spaghetti` uses `geom_line` where `spaghetti0` uses `geom_smooth`.
 

@@ -6,22 +6,60 @@
 #' @param y,x colnames to use. Default to `y`/`x_new`
 #' @param by colname for grouping structure (besides `k`). Default to `NULL`
 #' @param fun to use to summarise `y`
+#' @param x_bin breaks as numeric vector, passed to [cut()].
+#' You can use one of the [cutter] to define them. See **Examples**
 #' @param k colname for iteration . Default to `k`.
 #'
 #' @examples
-#' animals_q %>% bin(y=value, by=taxa, fun=mean)
+#' # mean, per taxa, per iteration and custom x_bin range
+#' animals_q %>% bin(y=value, by=taxa, fun=mean, x_bin=seq(-100, 100, 10))
 #'
-#' animals_q %>% bin(y=value, fun=mean)
+#' # shall you need help for binning, you can use one of cutters
+#' ## 10 groups of equal range
+#' cutter_interval(animals_q, n=10, x_new)
+#' ## 7 groups with ~same number of observations
+#' cutter_number(animals_q, n=10, x_new)
+#' ## bin every 100 years, note that we use tpq and taq 'original' columns here
+#' cutter_width(animals_q, width=100, tpq, taq)
+#'
+#' # then wrap the result you like with cutter_to_seq
+#' # to go back to numbers and pass the result to bin eg:
+#' equal_n <- cutter_to_seq(cutter_number(animals_q, n=10, x_new))
+#' animals_equal_n <- bin(animals_q, y=value, by=taxa,
+#'                        fun=mean, x_bin=equal_n)
+#' # let's check that groups have roughly the same size:
+#' dplyr::count(animals_equal_n, x_bin) # sounds good
+#'
+#' # you can use other functions eg median,
+#' # and do not specify by so that all taxa are merged
+#' # and a global median is returned
+#' bin(animals_q, y=value, x_bin=equal_n, fun=median)
+#'
+#' # if you want many functions at once, you do not need bin
+#' # when you have dplyr. See ?summarise
+#' animals_q %>%
+#'   dplyr::mutate(x_bin=cut(x_new, breaks=equal_n)) %>%
+#'   dplyr::group_by(k, taxa, x_bin) %>%
+#'   dplyr::summarise(
+#'     qs    = stats::quantile(value, c(0.1, 0.25, 0.75, 0.9)), prob = c(0.1, 0.25, 0.75, 0.9),
+#'     var   = stats::var(value),
+#'     range = max(value)-min(value), .groups = "drop") %>%
+#'     # then a little pivot_wider to get all quantile columns
+#'  tidyr::pivot_wider(values_from = qs,
+#'                     names_from = prob,
+#'                     names_prefix="q")
+#'
 #' @export
-bin <- function(df, y=y, x=x_new, by=NULL, fun=stats::median,
-                      # x_bin,
-                      k=k){
-  # todo implement
-  # if (missing(x_pred))
-  #   df %>% dplyr::pull({{x}}) %>% ggplot2::cut_number(5)
+bin <- function(df, y=y, x=x_new, by=NULL,
+                fun=stats::median, x_bin, k=k){
 
+  # message
+  levs <- df %>% dplyr::pull({{x}}) %>% cut(breaks=x_bin) %>% levels()
+  message(" * binning with ", length(levs), " breaks ranging from ", levs[1], " to ", levs[length(levs)])
+
+  # and bin now
   df %>%
-    dplyr::mutate(x_bin=ggplot2::cut_number({{x}}, 5)) %>%
+    dplyr::mutate(x_bin=cut({{x}}, breaks=x_bin)) %>%
     dplyr::group_by({{k}}, {{by}}, x_bin) %>%
     dplyr::summarise(y_bin=fun({{y}}), .groups = "drop")
 }
