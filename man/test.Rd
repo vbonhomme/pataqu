@@ -69,7 +69,7 @@ x \%>\%
 
 x \%>\%
   test_pairwise(by=taxa) \%>\%
-  dplyr::mutate(alpha_adj=alpha/n(),
+  dplyr::mutate(alpha_adj=alpha/dplyr::n(),
                 signif=p<alpha_adj)
 
 }
