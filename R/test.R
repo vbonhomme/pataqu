@@ -29,7 +29,24 @@
 #' # pairwise testing
 #' x %>% test_pairwise(by=taxa)
 #'
-#' # bonferroni todo
+#' # you can filter "significant" ones
+#' alpha=0.01
+#' x %>%
+#'   test_pairwise(by=taxa) %>%
+#'   dplyr::mutate(signif=p<alpha)
+#'   # you can continue the pipe with
+#'   # dplyr::filter(!signif) to only get not different
+#'   # or
+#'   # dplyr::filter(signif) to only the different ones
+#'
+#' # yet before, you probably need to adjust your alpha
+#' # by the number of tests, ie do some Bonferroni correction
+#' # the number of tests is simply dplyr::n()
+#'
+#' x %>%
+#'   test_pairwise(by=taxa) %>%
+#'   dplyr::mutate(alpha_adj=alpha/n(),
+#'                 signif=p<alpha_adj)
 #'
 #' @name test
 NULL
