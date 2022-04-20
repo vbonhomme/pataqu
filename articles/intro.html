@@ -84,17 +84,17 @@
 <div class="section level2">
 <h2 id="rationale">Rationale<a class="anchor" aria-label="anchor" href="#rationale"></a>
 </h2>
-<div class="section level4">
-<h4 id="sources-of-uncertainties">Sources of uncertainties<a class="anchor" aria-label="anchor" href="#sources-of-uncertainties"></a>
-</h4>
+<div class="section level3">
+<h3 id="sources-of-uncertainties">Sources of uncertainties<a class="anchor" aria-label="anchor" href="#sources-of-uncertainties"></a>
+</h3>
 <p>We chiefly had in mind archaeological data which dating of remains are often temporally bounded between two certain events, named <em>terminus post/ante quem</em>, further abbreviated tpq and taq<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;hence the package name which is also a delicate pun, in French&lt;/p&gt;"><sup>1</sup></a>. The tpq is the earliest date, the taq the latest.</p>
 <p>The <em>real</em> event may have happened anytime between these two boundaries with a flat, uniform, density of probability along the interval.</p>
 <p>We can also think of radiocarbon dating, which comes with a prediction and a confidence interval (say <span class="math inline">\(\mu ± \sigma\)</span>). But here the dating differ and the <em>real</em> event has a density of probability of gaussian nature with parameters <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span>.</p>
 <p>More generally, we will show how to deal with arbitrary uncertainties on x, whenever you have an idea on how it varies.</p>
 </div>
-<div class="section level4">
-<h4 id="consequences-and-how-to-inspect-them">Consequences and how to inspect them<a class="anchor" aria-label="anchor" href="#consequences-and-how-to-inspect-them"></a>
-</h4>
+<div class="section level3">
+<h3 id="consequences-and-how-to-inspect-them">Consequences and how to inspect them<a class="anchor" aria-label="anchor" href="#consequences-and-how-to-inspect-them"></a>
+</h3>
 <p>Whatever the source of the uncertainty on x, the graphics, tests and overall stories we can obtain from data may well be affected.</p>
 <p>How robust is your lovely story regarding x uncertainties?</p>
 <p>pataqu aims at visualizing and testing this using permutations. This is not the only way to do it but in our view it has the merit to only use information contained in the data itself.</p>
@@ -114,10 +114,10 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vbonhomme/pataqu" class="external-link">pataqu</a></span><span class="op">)</span></code></pre></div>
-<div class="section level4">
-<h4 id="animals-dataset">
+<div class="section level3">
+<h3 id="animals-dataset">
 <code>animals</code> dataset<a class="anchor" aria-label="anchor" href="#animals-dataset"></a>
-</h4>
+</h3>
 <p>This dataset is made of real (and still unpublished) data where researchers measured a <code>value</code> of interest on archaeological remains, in several <code>sites</code> (with <code>us</code> or stratigraphical units in them), dated with <code>tpq</code> and <code>taq</code>. The remains belonged to four <code>taxa</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">animals</span><span class="op">)</span>
@@ -163,10 +163,10 @@
 <p><img src="intro_files/figure-html/gg_mid_animals2-1.png" width="700"></p>
 <p>Same same but different.</p>
 </div>
-<div class="section level4">
-<h4 id="shake-generates-a-new-dataset">
+<div class="section level3">
+<h3 id="shake-generates-a-new-dataset">
 <code>shake</code>: generates a new dataset<a class="anchor" aria-label="anchor" href="#shake-generates-a-new-dataset"></a>
-</h4>
+</h3>
 <p>The code used above is exactly what <code>shake_uniform</code> is made of behind the curtain. You can check by yourself and type <code><a href="../reference/shake.html">pataqu::shake_uniform</a></code> (no brackets) in the console. Have a look to the different shakers with <code><a href="../reference/shake.html">?shake</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">animals</span>
@@ -201,10 +201,10 @@
 <span class="co">#&gt; <span style="color: #949494;"># … with 5,523 more rows</span></span></code></pre></div>
 <p>pataqu generalizes this idea with decoration around this pattern.</p>
 </div>
-<div class="section level4">
-<h4 id="quake-generates-many-datasets">
+<div class="section level3">
+<h3 id="quake-generates-many-datasets">
 <code>quake</code>: generates many datasets<a class="anchor" aria-label="anchor" href="#quake-generates-many-datasets"></a>
-</h4>
+</h3>
 <p>You can do several shakes at once with the function <code>quake</code> which is the real entry point of analyses with pataqu.</p>
 <p>Here we will simulate only 5 new datasets for the sake of speed but you can generate thousands of them<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;On my 2013 Mac Book Pro it takes 15 sec. to quake animals and have half a million observations, so this is reasonnably fast&lt;/p&gt;"><sup>2</sup></a> with randomized datations.</p>
 <p><code>quake</code> uses one of the shakers to generate entire datasets, possibly thousands of them. Here, we have <code>tpq</code> and <code>taq</code> dating so we will use <code>shake_uniform</code> and we have to specify the name of the columns<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Arguments names (here &lt;code&gt;min&lt;/code&gt; and &lt;code&gt;max&lt;/code&gt; can be omitted as long as they come in the order expected by &lt;code&gt;shake_uniform&lt;/code&gt; but I think it is a bad idea and not so painful to type&lt;/p&gt;"><sup>3</sup></a>.</p>
@@ -291,10 +291,10 @@
 <span class="co">#&gt; <span style="color: #BCBCBC;">20</span>     2 frog  Arl-Cp A-C_7039   -<span style="color: #BB0000;">15</span>    60 -<span style="color: #BB0000;">0.060</span><span style="color: #BB0000; text-decoration: underline;">8</span>   43.8</span></code></pre></div>
 <p>Note that lines <code>c(1, 3)</code> in one hand, and <code>c(6, 7)</code> in the other share for the first iteration (and all others), the same <code>x_new</code> because they come from the same <code>us</code>.</p>
 </div>
-<div class="section level4">
-<h4 id="spaghetti0-visualizing-trend-after-quake">
+<div class="section level3">
+<h3 id="spaghetti0-visualizing-trend-after-quake">
 <code>spaghetti0</code> visualizing trend after <code>quake</code><a class="anchor" aria-label="anchor" href="#spaghetti0-visualizing-trend-after-quake"></a>
-</h4>
+</h3>
 <p>Let’s say you are happy with the straightforward <code>geom_smooth</code> from ggplot2. <code>spaghetti0</code> helps you to do this <em>directly</em> after <code>quake</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/spaghetti.html">spaghetti0</a></span><span class="op">(</span><span class="va">many_animals</span>, y<span class="op">=</span><span class="va">value</span>, by<span class="op">=</span><span class="va">taxa</span><span class="op">)</span>
@@ -302,9 +302,9 @@
 <p><img src="intro_files/figure-html/spaghetti0-1.png" width="700"></p>
 <p>The name of the function should be clear now but why the trailing ‘0’ to it? You’re right, there is a <code>spaghetti</code> full stop but it comes after an intermediate modelling step we will see now.</p>
 </div>
-<div class="section level4">
-<h4 id="to-bin-or-not-to-bin">To bin or not to bin<a class="anchor" aria-label="anchor" href="#to-bin-or-not-to-bin"></a>
-</h4>
+<div class="section level3">
+<h3 id="to-bin-or-not-to-bin">To bin or not to bin?<a class="anchor" aria-label="anchor" href="#to-bin-or-not-to-bin"></a>
+</h3>
 <p>You have many new x values now but how about having them fixed on x values of interest? Here, we can think of slicing the temporal range into centuries, or 20 groups of same size and then get estimates, for each permutations of the value of interest.</p>
 <p>Such discretization of a continous data may seen paradoxical when we are precisely randomizing x. It is neither mandatory (if you’re happy with <code>spaghetti0</code>) nor always desirable. Some of its merits and the motivation behind is detailed in <code><a href="../reference/fitting.html">?fitting</a></code> (and all <code>?fit_*</code> function since they share the same page).</p>
 <p>That being said, to do such discretizations you have two different approaches:</p>
@@ -314,10 +314,10 @@
 </ol>
 <p>The first approach is the purpose of <code>bin</code>: the second is the purpose of <code>fit_*</code> functions.</p>
 </div>
-<div class="section level4">
-<h4 id="bin-bins-values-and-summarize">
+<div class="section level3">
+<h3 id="bin-bins-values-and-summarize">
 <code>bin</code>: bins values and summarize<a class="anchor" aria-label="anchor" href="#bin-bins-values-and-summarize"></a>
-</h4>
+</h3>
 <p>From now on, we will shift to <code>animals_q</code> which is a built it dataset of <code>animals</code> with 20 permutations and with dates ranging between 100 BC and 100 AD (ie -100 to 100). See <code><a href="../reference/animals_q.html">?animals_q</a></code>.</p>
 <p><code>bin</code> discretizes x values using variations on <code>cut</code> yet we use the more convenient <code>cut_number</code>, <code>cut_width</code> and <code>cut_interval</code> that comes with <code>ggplot2</code></p>
 <p>Let’s bin y values (still names <code>value</code>) every 50 years and get the median per taxa: (todo implement this)</p>
@@ -347,10 +347,10 @@
 <p><img src="intro_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 <p>We will see how to test that in the next section.</p>
 </div>
-<div class="section level4">
-<h4 id="fit_-fits-a-regression-model-and-predict">
+<div class="section level3">
+<h3 id="fit_-fits-a-regression-model-and-predict">
 <code>fit_*</code>: fits a regression model and predict<a class="anchor" aria-label="anchor" href="#fit_-fits-a-regression-model-and-predict"></a>
-</h4>
+</h3>
 <p>You can also choose to define a regression model for each permutation and use it to predict fixed values. In other words, to gain more control over what <code>spaghetti0</code> offered you before, almost for free.</p>
 <p>Here come the <code>fit_*</code> family: (todo: handle x_pred, same refinement as above for bin)</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
@@ -423,10 +423,10 @@
 <code class="sourceCode R">
 <span class="co"># you could also access all components of $mod columns, use broom on it, etc. etc.</span></code></pre></div>
 </div>
-<div class="section level4">
-<h4 id="test_-test-for-differences">
+<div class="section level3">
+<h3 id="test_-test-for-differences">
 <code>test_*</code>: test for differences<a class="anchor" aria-label="anchor" href="#test_-test-for-differences"></a>
-</h4>
+</h3>
 <p>Whether you used the <code>bin</code> or <code>fit</code> pathway you have now slices of x (eg a <code>factor</code>) and y values<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;not sure testing after a predict is a very orthodox idea though&lt;/p&gt;"><sup>5</sup></a>. We will call bacl <code>animals_binned</code> from above.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">animals_binned</span>
