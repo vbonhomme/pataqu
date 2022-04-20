@@ -77,21 +77,26 @@
 
     
     
-<p>pataqu aims at visualizing and testing the effect of uncertainties on x values (ie the independant variable). This vignette quickly presents the rationale of the package then jump to a case study.</p>
+<p>This vignette quickly presents the rationale of the package then jump to a case study. If you are reading it within R/RStudio, note that pataqu has a dedicated website that gathers the doc with examples, vignettes, news, etc.</p>
+<blockquote>
+<p><a href="http://vbonhomme.github.io/pataqu" class="external-link uri">http://vbonhomme.github.io/pataqu</a></p>
+</blockquote>
 <div class="section level2">
 <h2 id="rationale">Rationale<a class="anchor" aria-label="anchor" href="#rationale"></a>
 </h2>
-<div class="section level3">
-<h3 id="sources-of-uncertainties">Sources of uncertainties<a class="anchor" aria-label="anchor" href="#sources-of-uncertainties"></a>
-</h3>
+<div class="section level4">
+<h4 id="sources-of-uncertainties">Sources of uncertainties<a class="anchor" aria-label="anchor" href="#sources-of-uncertainties"></a>
+</h4>
 <p>We chiefly had in mind archaeological data which dating of remains are often temporally bounded between two certain events, named <em>terminus post/ante quem</em>, further abbreviated tpq and taq<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;hence the package name which is also a delicate pun, in French&lt;/p&gt;"><sup>1</sup></a>. The tpq is the earliest date, the taq the latest.</p>
 <p>The <em>real</em> event may have happened anytime between these two boundaries with a flat, uniform, density of probability along the interval.</p>
 <p>We can also think of radiocarbon dating, which comes with a prediction and a confidence interval (say <span class="math inline">\(\mu ± \sigma\)</span>). But here the dating differ and the <em>real</em> event has a density of probability of gaussian nature with parameters <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span>.</p>
+<p>More generally, we will show how to deal with arbitrary uncertainties on x, whenever you have an idea on how it varies.</p>
 </div>
-<div class="section level3">
-<h3 id="consequences-and-how-to-inspect-them">Consequences and how to inspect them<a class="anchor" aria-label="anchor" href="#consequences-and-how-to-inspect-them"></a>
-</h3>
-<p>Whatever the source of the uncertainty, the graphics, tests and overall stories we can obtain from data may well be affected. How robust your lovely trends to temporal uncertainties?</p>
+<div class="section level4">
+<h4 id="consequences-and-how-to-inspect-them">Consequences and how to inspect them<a class="anchor" aria-label="anchor" href="#consequences-and-how-to-inspect-them"></a>
+</h4>
+<p>Whatever the source of the uncertainty on x, the graphics, tests and overall stories we can obtain from data may well be affected.</p>
+<p>How robust is your lovely story regarding x uncertainties?</p>
 <p>pataqu aims at visualizing and testing this using permutations. This is not the only way to do it but in our view it has the merit to only use information contained in the data itself.</p>
 <p>The idea is:</p>
 <ol style="list-style-type: decimal">
@@ -104,16 +109,16 @@
 <div class="section level2">
 <h2 id="case-study-taq-and-ptq">Case study: taq and ptq<a class="anchor" aria-label="anchor" href="#case-study-taq-and-ptq"></a>
 </h2>
-<p>We will load the package and also use <code>dplyr</code> and <code>ggplot2</code> from the <a href="tidyverse.org/">tidyverse</a>. Overall, if you <code><a href="https://tidyverse.tidyverse.org" class="external-link">library(tidyverse)</a></code> you should not need much more<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;and typically you will not need to &lt;code&gt;dplyr::&lt;/code&gt; or &lt;code&gt;ggplot2::&lt;/code&gt; like what you have in function examples.&lt;/p&gt;"><sup>2</sup></a></p>
+<p>We will load the package and also use <code>dplyr</code> and <code>ggplot2</code> from the <a href="tidyverse.org/">tidyverse</a>. More generally, if you <code><a href="https://tidyverse.tidyverse.org" class="external-link">library(tidyverse)</a></code> you should not need much more and typically you will not need to <code>dplyr::</code> or <code>ggplot2::</code> like what you have in function examples. We treated well the examples so that they are meaningful.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vbonhomme/pataqu" class="external-link">pataqu</a></span><span class="op">)</span></code></pre></div>
-<div class="section level3">
-<h3 id="animals-dataset">
+<div class="section level4">
+<h4 id="animals-dataset">
 <code>animals</code> dataset<a class="anchor" aria-label="anchor" href="#animals-dataset"></a>
-</h3>
-<p>This dataset is made of real (and unpublished) data where researchers measured a <code>value</code> of interest on archaeological remains, in several <code>sites</code> (with <code>us</code> or stratigraphical units in them), dated with <code>tpq</code> and <code>taq</code>. The remains belonged to four <code>taxa</code>.</p>
+</h4>
+<p>This dataset is made of real (and still unpublished) data where researchers measured a <code>value</code> of interest on archaeological remains, in several <code>sites</code> (with <code>us</code> or stratigraphical units in them), dated with <code>tpq</code> and <code>taq</code>. The remains belonged to four <code>taxa</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">animals</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 6</span></span>
@@ -131,8 +136,9 @@
 <code class="sourceCode R"><span class="co"># pure cosmetics for lighter graphs</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html" class="external-link">theme_set</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
-<span class="va">animals</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
- <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html" class="external-link">geom_errorbarh</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xmin<span class="op">=</span><span class="va">tpq</span>, xmax<span class="op">=</span><span class="va">taq</span>, y<span class="op">=</span><span class="va">value</span>, col<span class="op">=</span><span class="va">taxa</span><span class="op">)</span>, size<span class="op">=</span><span class="fl">0.2</span>, alpha<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">animals</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xmin<span class="op">=</span><span class="va">tpq</span>, xmax<span class="op">=</span><span class="va">taq</span>, y<span class="op">=</span><span class="va">value</span>, col<span class="op">=</span><span class="va">taxa</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html" class="external-link">geom_errorbarh</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">0.2</span>, alpha<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></code></pre></div>
 <p><img src="intro_files/figure-html/gg_errorh-1.png" width="700"></p>
 <p>What a mess! We could try to add a mid point and add a smoother on top of them.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -143,49 +149,346 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span>method<span class="op">=</span><span class="st">"loess"</span>, formula<span class="op">=</span><span class="st">"y~x"</span>, se<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">gg_mid</span>
 <span class="va">gg_mid</span></code></pre></div>
-<p><img src="intro_files/figure-html/gg_mid1-1.png" width="700"> We now are able to see some trends but we lost the uncertainty on x in the meantime. The graph before may have also been the one below, with the same likelihood.</p>
-<p>We take animals and simply draw other <code>x_new</code> values, not on the midpoint, somewhere between the tpq and taq of each line. We use <code>set.seed</code> for the sake of replicability only.</p>
+<p><img src="intro_files/figure-html/gg_mid1-1.png" width="700"> We can now see some trends but we lost the uncertainty on x in the meantime. The graph before may have also been the one below, with the same likelihood.</p>
+<p>We take animals and simply draw other <code>x_new</code> values, not on the midpoint but somewhere between the tpq and taq of each observation We use <code>set.seed</code> for the sake of replicability only.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2329</span><span class="op">)</span>
 <span class="co"># lets draw new x values</span>
 <span class="va">animals2</span> <span class="op">&lt;-</span> <span class="va">animals</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>x_new<span class="op">=</span><span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">1</span>, min<span class="op">=</span><span class="va">tpq</span>, max<span class="op">=</span><span class="va">taq</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>x_new<span class="op">=</span><span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">1</span>, min<span class="op">=</span><span class="va">tpq</span>, max<span class="op">=</span><span class="va">taq</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co"># and redo gg_mid graph with this new tibble</span>
 <span class="va">gg_mid</span> <span class="op"><a href="https://ggplot2.tidyverse.org/reference/gg-add.html" class="external-link">%+%</a></span> <span class="va">animals2</span></code></pre></div>
 <p><img src="intro_files/figure-html/gg_mid_animals2-1.png" width="700"></p>
 <p>Same same but different.</p>
-<p>The code used above is exactly what <code>shake_uniform</code> is made of behind the curtain<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;check by yourself and type &lt;code&gt;&lt;a href="../reference/shake.html"&gt;pataqu::shake_uniform&lt;/a&gt;&lt;/code&gt; (no brackets) in the console&lt;/p&gt;'><sup>3</sup></a>. Have a look to the different shakers with <code><a href="../reference/shake.html">?shake</a></code></p>
-<p>pataqu generalizes this idea with a decoration around this pattern.</p>
-<p>The mother function for doing permutations is <code>quake</code>. We will simulate 5 new datasets with randomized datations. We want to use <code>shake_uniform</code> for which we need to specify the column for <code>tpq</code> and <code>taq</code>.</p>
+</div>
+<div class="section level4">
+<h4 id="shake-generates-a-new-dataset">
+<code>shake</code>: generates a new dataset<a class="anchor" aria-label="anchor" href="#shake-generates-a-new-dataset"></a>
+</h4>
+<p>The code used above is exactly what <code>shake_uniform</code> is made of behind the curtain. You can check by yourself and type <code><a href="../reference/shake.html">pataqu::shake_uniform</a></code> (no brackets) in the console. Have a look to the different shakers with <code><a href="../reference/shake.html">?shake</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">a_q</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/quake.html">quake</a></span><span class="op">(</span><span class="va">animals</span>, k<span class="op">=</span><span class="fl">5</span>, shaker<span class="op">=</span><span class="va">shake_uniform</span>, min<span class="op">=</span><span class="va">tpq</span>, max<span class="op">=</span><span class="va">taq</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">animals</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 5,533 × 6</span></span>
+<span class="co">#&gt;    taxa  site   us         tpq   taq    value</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> frog  Alz-Br A-B_FO    -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">2</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> frog  Ans-lM A-M_12      50   700 -<span style="color: #BB0000;">0.123</span>  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> frog  Ans-lM A-M_12      50   700 -<span style="color: #BB0000;">0.129</span>  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> frog  Ans-lM A-M_139    150   200  0.120  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> frog  Ans-lM An-M_15     50   700  0.057<span style="text-decoration: underline;">5</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> frog  Ans-lM A-M_150     50   200  0.052<span style="text-decoration: underline;">8</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> frog  Ans-lM A-M_150     50   200 -<span style="color: #BB0000;">0.008</span><span style="color: #BB0000; text-decoration: underline;">04</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> frog  Arl-Cp A-C_1061   -<span style="color: #BB0000;">75</span>   -<span style="color: #BB0000;">40</span> -<span style="color: #BB0000;">0.076</span><span style="color: #BB0000; text-decoration: underline;">0</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> frog  Arl-Cp A-C_4043   -<span style="color: #BB0000;">40</span>   -<span style="color: #BB0000;">15</span> -<span style="color: #BB0000;">0.003</span><span style="color: #BB0000; text-decoration: underline;">85</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> frog  Arl-Cp A-C_7039   -<span style="color: #BB0000;">15</span>    60 -<span style="color: #BB0000;">0.060</span><span style="color: #BB0000; text-decoration: underline;">8</span> </span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 5,523 more rows</span></span>
+<span class="fu"><a href="../reference/shake.html">shake_uniform</a></span><span class="op">(</span><span class="va">animals</span>, min<span class="op">=</span><span class="va">tpq</span>, max<span class="op">=</span><span class="va">taq</span><span class="op">)</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 5,533 × 7</span></span>
+<span class="co">#&gt;    taxa  site   us         tpq   taq    value x_new</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> frog  Alz-Br A-B_FO    -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">2</span>  -<span style="color: #BB0000;">72.0</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> frog  Ans-lM A-M_12      50   700 -<span style="color: #BB0000;">0.123</span>   561. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> frog  Ans-lM A-M_12      50   700 -<span style="color: #BB0000;">0.129</span>   129. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> frog  Ans-lM A-M_139    150   200  0.120   196. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> frog  Ans-lM An-M_15     50   700  0.057<span style="text-decoration: underline;">5</span>  592. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> frog  Ans-lM A-M_150     50   200  0.052<span style="text-decoration: underline;">8</span>  105. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> frog  Ans-lM A-M_150     50   200 -<span style="color: #BB0000;">0.008</span><span style="color: #BB0000; text-decoration: underline;">04</span> 147. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> frog  Arl-Cp A-C_1061   -<span style="color: #BB0000;">75</span>   -<span style="color: #BB0000;">40</span> -<span style="color: #BB0000;">0.076</span><span style="color: #BB0000; text-decoration: underline;">0</span>  -<span style="color: #BB0000;">72.4</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> frog  Arl-Cp A-C_4043   -<span style="color: #BB0000;">40</span>   -<span style="color: #BB0000;">15</span> -<span style="color: #BB0000;">0.003</span><span style="color: #BB0000; text-decoration: underline;">85</span> -<span style="color: #BB0000;">35.0</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> frog  Arl-Cp A-C_7039   -<span style="color: #BB0000;">15</span>    60 -<span style="color: #BB0000;">0.060</span><span style="color: #BB0000; text-decoration: underline;">8</span>   58.3</span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 5,523 more rows</span></span></code></pre></div>
+<p>pataqu generalizes this idea with decoration around this pattern.</p>
+</div>
+<div class="section level4">
+<h4 id="quake-generates-many-datasets">
+<code>quake</code>: generates many datasets<a class="anchor" aria-label="anchor" href="#quake-generates-many-datasets"></a>
+</h4>
+<p>You can do several shakes at once with the function <code>quake</code> which is the real entry point of analyses with pataqu.</p>
+<p>Here we will simulate only 5 new datasets for the sake of speed but you can generate thousands of them<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;On my 2013 Mac Book Pro it takes 15 sec. to quake animals and have half a million observations, so this is reasonnably fast&lt;/p&gt;"><sup>2</sup></a> with randomized datations.</p>
+<p><code>quake</code> uses one of the shakers to generate entire datasets, possibly thousands of them. Here, we have <code>tpq</code> and <code>taq</code> dating so we will use <code>shake_uniform</code> and we have to specify the name of the columns<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Arguments names (here &lt;code&gt;min&lt;/code&gt; and &lt;code&gt;max&lt;/code&gt; can be omitted as long as they come in the order expected by &lt;code&gt;shake_uniform&lt;/code&gt; but I think it is a bad idea and not so painful to type&lt;/p&gt;"><sup>3</sup></a>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">many_animals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/quake.html">quake</a></span><span class="op">(</span><span class="va">animals</span>, k<span class="op">=</span><span class="fl">5</span>, shaker<span class="op">=</span><span class="va">shake_uniform</span>, min<span class="op">=</span><span class="va">tpq</span>, max<span class="op">=</span><span class="va">taq</span><span class="op">)</span>
 <span class="co">#&gt;  * quake animals using shake_uniform</span>
 <span class="co">#&gt;  * launching 5 permutations</span></code></pre></div>
-<!-- <!-- -->
-<!-- Let's have a look to the results: -->
-<!-- ```{r} -->
-<!-- a_q -->
-<!-- # spaghetti(a_q) -->
-<!-- ``` -->
-<!-- One can now test _globally_ when patterns between taxa differ: -->
-<!-- ```{r} -->
-<!-- res_global <- a_q %>% synchrony() -->
-<!-- res_global %>% filter(p<1e-4) -->
-<!-- ``` -->
-<!-- But also test for pairwise differences: -->
-<!-- ```{r} -->
-<!-- res <- a_q %>% synchrony_pw() -->
-<!-- head(res) -->
-<!-- ``` -->
-<!-- And we can also check only those that differ: -->
-<!-- ```{r} -->
-<!--  res %>% filter(p<0.0001) -->
-<!-- ``` -->
-<!-- -->
-<p>–&gt;</p>
+<p>Let’s have a look to the results:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">many_animals</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 27,665 × 8</span></span>
+<span class="co">#&gt;        k taxa  site   us         tpq   taq    value  x_new</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 frog  Alz-Br A-B_FO    -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">2</span>  -<span style="color: #BB0000;">73.7</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 frog  Ans-lM A-M_12      50   700 -<span style="color: #BB0000;">0.123</span>   395.  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     1 frog  Ans-lM A-M_12      50   700 -<span style="color: #BB0000;">0.129</span>   249.  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     1 frog  Ans-lM A-M_139    150   200  0.120   192.  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     1 frog  Ans-lM An-M_15     50   700  0.057<span style="text-decoration: underline;">5</span>  226.  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     1 frog  Ans-lM A-M_150     50   200  0.052<span style="text-decoration: underline;">8</span>  129.  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     1 frog  Ans-lM A-M_150     50   200 -<span style="color: #BB0000;">0.008</span><span style="color: #BB0000; text-decoration: underline;">04</span> 127.  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     1 frog  Arl-Cp A-C_1061   -<span style="color: #BB0000;">75</span>   -<span style="color: #BB0000;">40</span> -<span style="color: #BB0000;">0.076</span><span style="color: #BB0000; text-decoration: underline;">0</span>  -<span style="color: #BB0000;">59.8</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     1 frog  Arl-Cp A-C_4043   -<span style="color: #BB0000;">40</span>   -<span style="color: #BB0000;">15</span> -<span style="color: #BB0000;">0.003</span><span style="color: #BB0000; text-decoration: underline;">85</span> -<span style="color: #BB0000;">17.9</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     1 frog  Arl-Cp A-C_7039   -<span style="color: #BB0000;">15</span>    60 -<span style="color: #BB0000;">0.060</span><span style="color: #BB0000; text-decoration: underline;">8</span>    4.83</span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 27,655 more rows</span></span></code></pre></div>
+<p>We know have 27665 observations. Another way to look at them would be to take the first observations in each permutation and for each species:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">many_animals</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">taxa</span>, <span class="va">k</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">1</span><span class="op">)</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 20 × 8</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Groups:   taxa, k [20]</span></span>
+<span class="co">#&gt;        k taxa  site   us           tpq   taq    value  x_new</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 cat   Alz-Br A-B_1000    -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.167</span>    -<span style="color: #BB0000;">58.6</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     2 cat   Alz-Br A-B_1000    -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.167</span>    -<span style="color: #BB0000;">53.7</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     3 cat   Alz-Br A-B_1000    -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.167</span>   -<span style="color: #BB0000;">110.</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     4 cat   Alz-Br A-B_1000    -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.167</span>    -<span style="color: #BB0000;">80.9</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     5 cat   Alz-Br A-B_1000    -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.167</span>   -<span style="color: #BB0000;">109.</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     1 bird  Brm-CV B-CV_104     200   250  0.020<span style="text-decoration: underline;">7</span>   208. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     2 bird  Brm-CV B-CV_104     200   250  0.020<span style="text-decoration: underline;">7</span>   226. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     3 bird  Brm-CV B-CV_104     200   250  0.020<span style="text-decoration: underline;">7</span>   220. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     4 bird  Brm-CV B-CV_104     200   250  0.020<span style="text-decoration: underline;">7</span>   226. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     5 bird  Brm-CV B-CV_104     200   250  0.020<span style="text-decoration: underline;">7</span>   236. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">11</span>     1 mouse Arl-TV A-TV_11014   -<span style="color: #BB0000;">40</span>   -<span style="color: #BB0000;">20</span> -<span style="color: #BB0000;">0.001</span><span style="color: #BB0000; text-decoration: underline;">90</span>  -<span style="color: #BB0000;">23.8</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">12</span>     2 mouse Arl-TV A-TV_11014   -<span style="color: #BB0000;">40</span>   -<span style="color: #BB0000;">20</span> -<span style="color: #BB0000;">0.001</span><span style="color: #BB0000; text-decoration: underline;">90</span>  -<span style="color: #BB0000;">28.3</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">13</span>     3 mouse Arl-TV A-TV_11014   -<span style="color: #BB0000;">40</span>   -<span style="color: #BB0000;">20</span> -<span style="color: #BB0000;">0.001</span><span style="color: #BB0000; text-decoration: underline;">90</span>  -<span style="color: #BB0000;">36.8</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">14</span>     4 mouse Arl-TV A-TV_11014   -<span style="color: #BB0000;">40</span>   -<span style="color: #BB0000;">20</span> -<span style="color: #BB0000;">0.001</span><span style="color: #BB0000; text-decoration: underline;">90</span>  -<span style="color: #BB0000;">38.8</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">15</span>     5 mouse Arl-TV A-TV_11014   -<span style="color: #BB0000;">40</span>   -<span style="color: #BB0000;">20</span> -<span style="color: #BB0000;">0.001</span><span style="color: #BB0000; text-decoration: underline;">90</span>  -<span style="color: #BB0000;">32.6</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">16</span>     1 frog  Alz-Br A-B_FO      -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">2</span>   -<span style="color: #BB0000;">73.7</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">17</span>     2 frog  Alz-Br A-B_FO      -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">2</span>   -<span style="color: #BB0000;">90.7</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">18</span>     3 frog  Alz-Br A-B_FO      -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">2</span>   -<span style="color: #BB0000;">65.2</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">19</span>     4 frog  Alz-Br A-B_FO      -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">2</span>  -<span style="color: #BB0000;">117.</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">20</span>     5 frog  Alz-Br A-B_FO      -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">2</span>   -<span style="color: #BB0000;">69.7</span></span></code></pre></div>
+<p>Observe that the new column <code>x_new</code> varies for each permutation but is still strictly bounded by <code>tpq</code> and <code>taq</code>.</p>
+<p>Sometimes you may not want as much randomness. Perhaps your new <code>x_new</code> should only be allowed to vary <em>within</em> stratigraphical units. That’s the job of <code>shake_*_within</code> which expects a <code>by</code> argument, so here again, we pass <code>quake</code> with it.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">animals</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># we pick only 10 obs (only for speed here)</span>
+  <span class="fu"><a href="../reference/quake.html">quake</a></span><span class="op">(</span><span class="fl">2</span>, <span class="va">shake_uniform_within</span>, <span class="va">tpq</span>, <span class="va">taq</span>, within<span class="op">=</span><span class="va">us</span><span class="op">)</span>
+<span class="co">#&gt;  * quake . using shake_uniform_within</span>
+<span class="co">#&gt;  * launching 2 permutations</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 20 × 8</span></span>
+<span class="co">#&gt;        k taxa  site   us         tpq   taq    value x_new</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 frog  Alz-Br A-B_FO    -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">2</span>  -<span style="color: #BB0000;">94.6</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 frog  Ans-lM A-M_12      50   700 -<span style="color: #BB0000;">0.123</span>   261. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     1 frog  Ans-lM A-M_12      50   700 -<span style="color: #BB0000;">0.129</span>   261. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     1 frog  Ans-lM A-M_139    150   200  0.120   155. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     1 frog  Ans-lM An-M_15     50   700  0.057<span style="text-decoration: underline;">5</span>  330. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     1 frog  Ans-lM A-M_150     50   200  0.052<span style="text-decoration: underline;">8</span>  178. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     1 frog  Ans-lM A-M_150     50   200 -<span style="color: #BB0000;">0.008</span><span style="color: #BB0000; text-decoration: underline;">04</span> 178. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     1 frog  Arl-Cp A-C_1061   -<span style="color: #BB0000;">75</span>   -<span style="color: #BB0000;">40</span> -<span style="color: #BB0000;">0.076</span><span style="color: #BB0000; text-decoration: underline;">0</span>  -<span style="color: #BB0000;">59.7</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     1 frog  Arl-Cp A-C_4043   -<span style="color: #BB0000;">40</span>   -<span style="color: #BB0000;">15</span> -<span style="color: #BB0000;">0.003</span><span style="color: #BB0000; text-decoration: underline;">85</span> -<span style="color: #BB0000;">28.0</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     1 frog  Arl-Cp A-C_7039   -<span style="color: #BB0000;">15</span>    60 -<span style="color: #BB0000;">0.060</span><span style="color: #BB0000; text-decoration: underline;">8</span>   54.9</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">11</span>     2 frog  Alz-Br A-B_FO    -<span style="color: #BB0000;">125</span>   -<span style="color: #BB0000;">50</span> -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">2</span>  -<span style="color: #BB0000;">64.7</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">12</span>     2 frog  Ans-lM A-M_12      50   700 -<span style="color: #BB0000;">0.123</span>   295. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">13</span>     2 frog  Ans-lM A-M_12      50   700 -<span style="color: #BB0000;">0.129</span>   295. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">14</span>     2 frog  Ans-lM A-M_139    150   200  0.120   157. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">15</span>     2 frog  Ans-lM An-M_15     50   700  0.057<span style="text-decoration: underline;">5</span>  679. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">16</span>     2 frog  Ans-lM A-M_150     50   200  0.052<span style="text-decoration: underline;">8</span>  117. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">17</span>     2 frog  Ans-lM A-M_150     50   200 -<span style="color: #BB0000;">0.008</span><span style="color: #BB0000; text-decoration: underline;">04</span> 117. </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">18</span>     2 frog  Arl-Cp A-C_1061   -<span style="color: #BB0000;">75</span>   -<span style="color: #BB0000;">40</span> -<span style="color: #BB0000;">0.076</span><span style="color: #BB0000; text-decoration: underline;">0</span>  -<span style="color: #BB0000;">43.3</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">19</span>     2 frog  Arl-Cp A-C_4043   -<span style="color: #BB0000;">40</span>   -<span style="color: #BB0000;">15</span> -<span style="color: #BB0000;">0.003</span><span style="color: #BB0000; text-decoration: underline;">85</span> -<span style="color: #BB0000;">21.8</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">20</span>     2 frog  Arl-Cp A-C_7039   -<span style="color: #BB0000;">15</span>    60 -<span style="color: #BB0000;">0.060</span><span style="color: #BB0000; text-decoration: underline;">8</span>   43.8</span></code></pre></div>
+<p>Note that lines <code>c(1, 3)</code> in one hand, and <code>c(6, 7)</code> in the other share for the first iteration (and all others), the same <code>x_new</code> because they come from the same <code>us</code>.</p>
 </div>
+<div class="section level4">
+<h4 id="spaghetti0-visualizing-trend-after-quake">
+<code>spaghetti0</code> visualizing trend after <code>quake</code><a class="anchor" aria-label="anchor" href="#spaghetti0-visualizing-trend-after-quake"></a>
+</h4>
+<p>Let’s say you are happy with the straightforward <code>geom_smooth</code> from ggplot2. <code>spaghetti0</code> helps you to do this <em>directly</em> after <code>quake</code>.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/spaghetti.html">spaghetti0</a></span><span class="op">(</span><span class="va">many_animals</span>, y<span class="op">=</span><span class="va">value</span>, by<span class="op">=</span><span class="va">taxa</span><span class="op">)</span>
+<span class="co">#&gt; `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'</span></code></pre></div>
+<p><img src="intro_files/figure-html/spaghetti0-1.png" width="700"></p>
+<p>The name of the function should be clear now but why the trailing ‘0’ to it? You’re right, there is a <code>spaghetti</code> full stop but it comes after an intermediate modelling step we will see now.</p>
+</div>
+<div class="section level4">
+<h4 id="to-bin-or-not-to-bin">To bin or not to bin<a class="anchor" aria-label="anchor" href="#to-bin-or-not-to-bin"></a>
+</h4>
+<p>You have many new x values now but how about having them fixed on x values of interest? Here, we can think of slicing the temporal range into centuries, or 20 groups of same size and then get estimates, for each permutations of the value of interest.</p>
+<p>Such discretization of a continous data may seen paradoxical when we are precisely randomizing x. It is neither mandatory (if you’re happy with <code>spaghetti0</code>) nor always desirable. Some of its merits and the motivation behind is detailed in <code><a href="../reference/fitting.html">?fitting</a></code> (and all <code>?fit_*</code> function since they share the same page).</p>
+<p>That being said, to do such discretizations you have two different approaches:</p>
+<ol style="list-style-type: decimal">
+<li><p>define bins, grab data in them and then summarize them, eg using <code>median</code>, <code>mean</code>, etc.</p></li>
+<li><p>fit regression models on full range and then use them to predict y values using a common sequence of x values.</p></li>
+</ol>
+<p>The first approach is the purpose of <code>bin</code>: the second is the purpose of <code>fit_*</code> functions.</p>
+</div>
+<div class="section level4">
+<h4 id="bin-bins-values-and-summarize">
+<code>bin</code>: bins values and summarize<a class="anchor" aria-label="anchor" href="#bin-bins-values-and-summarize"></a>
+</h4>
+<p>From now on, we will shift to <code>animals_q</code> which is a built it dataset of <code>animals</code> with 20 permutations and with dates ranging between 100 BC and 100 AD (ie -100 to 100). See <code><a href="../reference/animals_q.html">?animals_q</a></code>.</p>
+<p><code>bin</code> discretizes x values using variations on <code>cut</code> yet we use the more convenient <code>cut_number</code>, <code>cut_width</code> and <code>cut_interval</code> that comes with <code>ggplot2</code></p>
+<p>Let’s bin y values (still names <code>value</code>) every 50 years and get the median per taxa: (todo implement this)</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">animals_binned</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bin.html">bin</a></span><span class="op">(</span><span class="va">animals_q</span>, y<span class="op">=</span><span class="va">value</span>, by<span class="op">=</span><span class="va">taxa</span>, fun<span class="op">=</span><span class="va">median</span><span class="op">)</span>
+<span class="va">animals_binned</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 400 × 4</span></span>
+<span class="co">#&gt;        k taxa  x_bin            y_bin</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 cat   [-75,-19.6]   -<span style="color: #BB0000;">0.027</span><span style="color: #BB0000; text-decoration: underline;">5</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 cat   (-19.6,-2.48] -<span style="color: #BB0000;">0.081</span><span style="color: #BB0000; text-decoration: underline;">0</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     1 cat   (-2.48,16.9]  -<span style="color: #BB0000;">0.101</span>  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     1 cat   (16.9,59.8]    0.027<span style="text-decoration: underline;">4</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     1 cat   (59.8,79.3]    0.055<span style="text-decoration: underline;">6</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     1 bird  [-75,-19.6]   -<span style="color: #BB0000;">0.038</span><span style="color: #BB0000; text-decoration: underline;">3</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     1 bird  (-19.6,-2.48] -<span style="color: #BB0000;">0.031</span><span style="color: #BB0000; text-decoration: underline;">0</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     1 bird  (-2.48,16.9]   0.006<span style="text-decoration: underline;">34</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     1 bird  (16.9,59.8]    0.037<span style="text-decoration: underline;">2</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     1 bird  (59.8,79.3]   -<span style="color: #BB0000;">0.018</span><span style="color: #BB0000; text-decoration: underline;">1</span> </span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 390 more rows</span></span></code></pre></div>
+<p>Note that <code>x_bin</code> is now a factor. The natural graphical display is a good old boxplot:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">animals_binned</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span> <span class="va">x_bin</span>, <span class="va">y_bin</span>, fill<span class="op">=</span><span class="va">taxa</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span>outlier.size <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle<span class="op">=</span><span class="fl">45</span>, h<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<p>We will see how to test that in the next section.</p>
+</div>
+<div class="section level4">
+<h4 id="fit_-fits-a-regression-model-and-predict">
+<code>fit_*</code>: fits a regression model and predict<a class="anchor" aria-label="anchor" href="#fit_-fits-a-regression-model-and-predict"></a>
+</h4>
+<p>You can also choose to define a regression model for each permutation and use it to predict fixed values. In other words, to gain more control over what <code>spaghetti0</code> offered you before, almost for free.</p>
+<p>Here come the <code>fit_*</code> family: (todo: handle x_pred, same refinement as above for bin)</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">animals_gam</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fitting.html">fit_gam</a></span><span class="op">(</span><span class="va">animals_q</span>, y<span class="op">=</span><span class="va">value</span>, by<span class="op">=</span><span class="va">taxa</span>, x_pred<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">100</span>, <span class="fl">100</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;  * fitting with gam(value ~ s(x_new, bs = "cs"))</span>
+<span class="va">animals_gam</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,680 × 4</span></span>
+<span class="co">#&gt;        k taxa    y_pred x_pred</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 frog  -<span style="color: #BB0000;">0.329</span>     -<span style="color: #BB0000;">100</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 frog  -<span style="color: #BB0000;">0.280</span>      -<span style="color: #BB0000;">90</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     1 frog  -<span style="color: #BB0000;">0.232</span>      -<span style="color: #BB0000;">80</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     1 frog  -<span style="color: #BB0000;">0.183</span>      -<span style="color: #BB0000;">70</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     1 frog  -<span style="color: #BB0000;">0.134</span>      -<span style="color: #BB0000;">60</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     1 frog  -<span style="color: #BB0000;">0.085</span><span style="color: #BB0000; text-decoration: underline;">7</span>     -<span style="color: #BB0000;">50</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     1 frog  -<span style="color: #BB0000;">0.039</span><span style="color: #BB0000; text-decoration: underline;">5</span>     -<span style="color: #BB0000;">40</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     1 frog  -<span style="color: #BB0000;">0.004</span><span style="color: #BB0000; text-decoration: underline;">49</span>    -<span style="color: #BB0000;">30</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     1 frog   0.008<span style="text-decoration: underline;">82</span>    -<span style="color: #BB0000;">20</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     1 frog  -<span style="color: #BB0000;">0.017</span><span style="color: #BB0000; text-decoration: underline;">6</span>     -<span style="color: #BB0000;">10</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 1,670 more rows</span></span></code></pre></div>
+<p>Here finally comes <code>spaghetti</code> that displays such pre-digested data. In ggplot2 terms, <code>spaghetti</code> uses <code>geom_line</code> where <code>spaghetti0</code> uses <code>geom_smooth</code>.</p>
+<p>I know you want more graphs and less blabla (because you know you can find it in <code><a href="../reference/spaghetti.html">?spaghetti</a></code> anyway):</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/spaghetti.html">spaghetti</a></span><span class="op">(</span><span class="va">animals_gam</span>, by<span class="op">=</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p>In the same family, you also have <code>fit_loess</code> too and the good old <code>fit_lm</code> members. To all of them you can refine the formula to stick to what you want to model. We will try something like : <span class="math inline">\(value ~ x^3 + x\)</span> with no intercept.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">animals_origin</span> <span class="op">&lt;-</span> <span class="va">animals_q</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/fitting.html">fit_lm</a></span><span class="op">(</span>y<span class="op">=</span><span class="va">value</span>, 
+         formula_rhs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">x_new</span><span class="op">^</span><span class="fl">3</span><span class="op">)</span> <span class="op">+</span> <span class="va">x_new</span> <span class="op">-</span> <span class="fl">1</span>,
+         by<span class="op">=</span><span class="va">taxa</span>,
+         x_pred<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">100</span>, <span class="fl">100</span>, <span class="fl">10</span><span class="op">)</span>, 
+         .keep_mod <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt;  * fitting with lm(value ~ I(x_new^3) + x_new - 1)</span></code></pre></div>
+<p>The argument <code>formula_rhs</code> stands for “right hand side” and use the classical <code>formula</code> mini-grammar.</p>
+<p>First, let’s plot it:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/spaghetti.html">spaghetti</a></span><span class="op">(</span><span class="va">animals_origin</span>, by<span class="op">=</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p>It’s likely pure nonsense here but we do it anyway. Do not try this at lab without statistical safety belts.</p>
+<p>Perhaps, you have noticed the <code>.keep_mod</code> argument above and the additional columns in <code>animals_origins</code><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;yes, we expect you to copy-paste every single command ;-)&lt;/p&gt;"><sup>4</sup></a>:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">animals_origin</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,680 × 6</span></span>
+<span class="co">#&gt;        k taxa  mod      y_pred x_pred   adj_r2</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 frog  <span style="color: #949494;">&lt;lm&gt;</span>   0.021<span style="text-decoration: underline;">9</span>     -<span style="color: #BB0000;">100</span> 0.000<span style="text-decoration: underline;">421</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 frog  <span style="color: #949494;">&lt;lm&gt;</span>   0.017<span style="text-decoration: underline;">3</span>      -<span style="color: #BB0000;">90</span> 0.000<span style="text-decoration: underline;">421</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     1 frog  <span style="color: #949494;">&lt;lm&gt;</span>   0.013<span style="text-decoration: underline;">4</span>      -<span style="color: #BB0000;">80</span> 0.000<span style="text-decoration: underline;">421</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     1 frog  <span style="color: #949494;">&lt;lm&gt;</span>   0.010<span style="text-decoration: underline;">3</span>      -<span style="color: #BB0000;">70</span> 0.000<span style="text-decoration: underline;">421</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     1 frog  <span style="color: #949494;">&lt;lm&gt;</span>   0.007<span style="text-decoration: underline;">71</span>     -<span style="color: #BB0000;">60</span> 0.000<span style="text-decoration: underline;">421</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     1 frog  <span style="color: #949494;">&lt;lm&gt;</span>   0.005<span style="text-decoration: underline;">65</span>     -<span style="color: #BB0000;">50</span> 0.000<span style="text-decoration: underline;">421</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     1 frog  <span style="color: #949494;">&lt;lm&gt;</span>   0.004<span style="text-decoration: underline;">01</span>     -<span style="color: #BB0000;">40</span> 0.000<span style="text-decoration: underline;">421</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     1 frog  <span style="color: #949494;">&lt;lm&gt;</span>   0.002<span style="text-decoration: underline;">71</span>     -<span style="color: #BB0000;">30</span> 0.000<span style="text-decoration: underline;">421</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     1 frog  <span style="color: #949494;">&lt;lm&gt;</span>   0.001<span style="text-decoration: underline;">67</span>     -<span style="color: #BB0000;">20</span> 0.000<span style="text-decoration: underline;">421</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     1 frog  <span style="color: #949494;">&lt;lm&gt;</span>   0.000<span style="text-decoration: underline;">791</span>    -<span style="color: #BB0000;">10</span> 0.000<span style="text-decoration: underline;">421</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 1,670 more rows</span></span></code></pre></div>
+<p>When passing <code>fit_*</code> functions with <code>.keep_mod=TRUE</code> we do two things: keep the original models, add a single meaningful index on the quality of the model (see <code><a href="../reference/fitting.html">?fitting</a></code>, <code>adj.r2</code> for <code>gam</code> and <code>lm</code>; <code>rse</code> for <code>loess</code>).</p>
+<p>You need a little bit data handling but you can do nice things with them:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># first remove duplicates</span>
+<span class="va">lms</span> <span class="op">&lt;-</span> <span class="va">animals_origin</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">k</span>, <span class="va">taxa</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="co"># very low r2 everywhere: pure nonsense confirmed</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">lms</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">taxa</span>, <span class="va">adj_r2</span>, col<span class="op">=</span><span class="va">taxa</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html" class="external-link">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html" class="external-link">geom_jitter</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="co"># you could also access all components of $mod columns, use broom on it, etc. etc.</span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="test_-test-for-differences">
+<code>test_*</code>: test for differences<a class="anchor" aria-label="anchor" href="#test_-test-for-differences"></a>
+</h4>
+<p>Whether you used the <code>bin</code> or <code>fit</code> pathway you have now slices of x (eg a <code>factor</code>) and y values<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;not sure testing after a predict is a very orthodox idea though&lt;/p&gt;"><sup>5</sup></a>. We will call bacl <code>animals_binned</code> from above.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">animals_binned</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 400 × 4</span></span>
+<span class="co">#&gt;        k taxa  x_bin            y_bin</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 cat   [-75,-19.6]   -<span style="color: #BB0000;">0.027</span><span style="color: #BB0000; text-decoration: underline;">5</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 cat   (-19.6,-2.48] -<span style="color: #BB0000;">0.081</span><span style="color: #BB0000; text-decoration: underline;">0</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     1 cat   (-2.48,16.9]  -<span style="color: #BB0000;">0.101</span>  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     1 cat   (16.9,59.8]    0.027<span style="text-decoration: underline;">4</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     1 cat   (59.8,79.3]    0.055<span style="text-decoration: underline;">6</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     1 bird  [-75,-19.6]   -<span style="color: #BB0000;">0.038</span><span style="color: #BB0000; text-decoration: underline;">3</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     1 bird  (-19.6,-2.48] -<span style="color: #BB0000;">0.031</span><span style="color: #BB0000; text-decoration: underline;">0</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     1 bird  (-2.48,16.9]   0.006<span style="text-decoration: underline;">34</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     1 bird  (16.9,59.8]    0.037<span style="text-decoration: underline;">2</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     1 bird  (59.8,79.3]   -<span style="color: #BB0000;">0.018</span><span style="color: #BB0000; text-decoration: underline;">1</span> </span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 390 more rows</span></span></code></pre></div>
+<p>One can now test <em>globally</em> when patterns between taxa differ:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/test.html">test_globally</a></span><span class="op">(</span><span class="va">animals_binned</span>, x<span class="op">=</span><span class="va">x_bin</span>, y<span class="op">=</span><span class="va">y_bin</span>, by<span class="op">=</span><span class="va">taxa</span><span class="op">)</span>
+<span class="co">#&gt;  * testing global differences within taxa along 5 slices using kruskal_p</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 2</span></span>
+<span class="co">#&gt;   x_bin                p</span>
+<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> [-75,-19.6]   3.77<span style="color: #949494;">e</span><span style="color: #BB0000;">-14</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> (-19.6,-2.48] 6.97<span style="color: #949494;">e</span><span style="color: #BB0000;">-13</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> (-2.48,16.9]  1.10<span style="color: #949494;">e</span><span style="color: #BB0000;">-12</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> (16.9,59.8]   1.76<span style="color: #949494;">e</span><span style="color: #BB0000;">-10</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> (59.8,79.3]   2.94<span style="color: #949494;">e</span><span style="color: #BB0000;">-13</span></span></code></pre></div>
+<p>And test for pairwise differences:</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/test.html">test_pairwise</a></span><span class="op">(</span><span class="va">animals_binned</span>, x<span class="op">=</span><span class="va">x_bin</span>, y<span class="op">=</span><span class="va">y_bin</span>, by<span class="op">=</span><span class="va">taxa</span><span class="op">)</span>
+<span class="co">#&gt;  * testing differences between pairs of taxa along 5 slices using wilcox_p</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 30 × 3</span></span>
+<span class="co">#&gt;    x_bin         pw                      p</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> [-75,-19.6]   cat ~ bird   0.079<span style="text-decoration: underline;">6</span>      </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> [-75,-19.6]   cat ~ mouse  0.000<span style="text-decoration: underline;">000</span>058<span style="text-decoration: underline;">6</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> [-75,-19.6]   cat ~ frog   0.000<span style="text-decoration: underline;">000</span>059<span style="text-decoration: underline;">2</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> [-75,-19.6]   bird ~ mouse 0.000<span style="text-decoration: underline;">000</span>067<span style="text-decoration: underline;">0</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> [-75,-19.6]   bird ~ frog  0.000<span style="text-decoration: underline;">000</span>123 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> [-75,-19.6]   mouse ~ frog 0.000<span style="text-decoration: underline;">001</span>56  </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> (-19.6,-2.48] cat ~ bird   0.000<span style="text-decoration: underline;">000</span>067<span style="text-decoration: underline;">4</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> (-19.6,-2.48] cat ~ mouse  0.000<span style="text-decoration: underline;">000</span>067<span style="text-decoration: underline;">0</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> (-19.6,-2.48] cat ~ frog   0.000<span style="text-decoration: underline;">000</span>067<span style="text-decoration: underline;">4</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> (-19.6,-2.48] bird ~ mouse 0.036<span style="text-decoration: underline;">0</span>      </span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 20 more rows</span></span></code></pre></div>
+<p>You may have <code>warnings</code>related to ties. See <code><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">?wilcox.test</a></code></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="finally">Finally<a class="anchor" aria-label="anchor" href="#finally"></a>
+</h2>
+<p>This vignette shows most of what pataqu can help you at, yet most of the time presenting and discussing a <code>spaghetti0</code> plot would be, in our humble opinions, both enough and parcimonious.</p>
+<p>With that it mind, only two functions would be needed to get your results:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/quake.html">quake</a></span><span class="op">(</span><span class="va">animals</span>, k<span class="op">=</span><span class="fl">10</span>, <span class="va">shake_uniform</span>, <span class="va">tpq</span>, <span class="va">taq</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/spaghetti.html">spaghetti0</a></span><span class="op">(</span>y<span class="op">=</span><span class="va">value</span>, by<span class="op">=</span><span class="va">taxa</span><span class="op">)</span>
+<span class="co">#&gt;  * quake animals using shake_uniform</span>
+<span class="co">#&gt;  * launching 10 permutations</span>
+<span class="co">#&gt; `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'</span></code></pre></div>
+<p><img src="intro_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
 </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
