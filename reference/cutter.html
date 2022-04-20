@@ -138,6 +138,15 @@ use <code><a href="https://rdrr.io/r/base/cut.html" class="external-link">base::
 <span class="r-in"><span class="co"># the number of _different_ levels is not so diverse,</span></span>
 <span class="r-in"><span class="co"># so that n=30 would fail with "Insufficient data values"</span></span>
 <span class="r-in"><span class="co"># unlist(animals[, c("tpq", "taq")]) %&gt;% table()</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># cutter_to_seq is helpful to pass x_bin/x_pred to bin/fit_* respectively</span></span>
+<span class="r-in"><span class="co"># there is an example in ?bin that can be used to fit_* too</span></span>
+<span class="r-in"><span class="co"># cutter_to_seq go back to numeric from factor levels:</span></span>
+<span class="r-in"><span class="fu">cutter_width</span><span class="op">(</span><span class="va">animals</span>, <span class="fl">30</span>, <span class="va">tpq</span>, <span class="va">taq</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> <span class="fu">cutter_to_seq</span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] -195 -165 -135 -105  -75  -45  -15   15   45   75  105  135  165  195  225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16]  255  285  315  345  375  405  435  465  495  525  555  585  615  645  675</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [31]  705</span>
+<span class="r-in"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

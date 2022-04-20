@@ -132,7 +132,43 @@ groups present at that time.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    -<span style="color: #BB0000;">50</span> bird ~ mouse 0.007<span style="text-decoration: underline;">94</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 20 more rows</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># bonferroni todo</span></span>
+<span class="r-in"><span class="co"># you can filter "significant" ones</span></span>
+<span class="r-in"><span class="va">alpha</span><span class="op">=</span><span class="fl">0.01</span></span>
+<span class="r-in"><span class="va">x</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
+<span class="r-in">  <span class="fu">test_pairwise</span><span class="op">(</span>by<span class="op">=</span><span class="va">taxa</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
+<span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>signif<span class="op">=</span><span class="va">p</span><span class="op">&lt;</span><span class="va">alpha</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  * testing differences between pairs of taxa along 5 slices using wilcox_p</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 30 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    x_pred pw                 p signif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>   -<span style="color: #BB0000;">100</span> cat ~ bird   0.007<span style="text-decoration: underline;">94</span> TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>   -<span style="color: #BB0000;">100</span> cat ~ mouse  0.007<span style="text-decoration: underline;">94</span> TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>   -<span style="color: #BB0000;">100</span> cat ~ frog   0.007<span style="text-decoration: underline;">94</span> TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>   -<span style="color: #BB0000;">100</span> bird ~ mouse 0.007<span style="text-decoration: underline;">94</span> TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>   -<span style="color: #BB0000;">100</span> bird ~ frog  0.007<span style="text-decoration: underline;">94</span> TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>   -<span style="color: #BB0000;">100</span> mouse ~ frog 0.007<span style="text-decoration: underline;">94</span> TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>    -<span style="color: #BB0000;">50</span> cat ~ bird   0.007<span style="text-decoration: underline;">94</span> TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>    -<span style="color: #BB0000;">50</span> cat ~ mouse  0.007<span style="text-decoration: underline;">94</span> TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>    -<span style="color: #BB0000;">50</span> cat ~ frog   0.007<span style="text-decoration: underline;">94</span> TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    -<span style="color: #BB0000;">50</span> bird ~ mouse 0.007<span style="text-decoration: underline;">94</span> TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 20 more rows</span></span>
+<span class="r-in">  <span class="co"># you can continue the pipe with</span></span>
+<span class="r-in">  <span class="co"># dplyr::filter(!signif) to only get not different</span></span>
+<span class="r-in">  <span class="co"># or</span></span>
+<span class="r-in">  <span class="co"># dplyr::filter(signif) to only the different ones</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># yet before, you probably need to adjust your alpha</span></span>
+<span class="r-in"><span class="co"># by the number of tests, ie do some Bonferroni correction</span></span>
+<span class="r-in"><span class="co"># the number of tests is simply dplyr::n()</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">x</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
+<span class="r-in">  <span class="fu">test_pairwise</span><span class="op">(</span>by<span class="op">=</span><span class="va">taxa</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
+<span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>alpha_adj<span class="op">=</span><span class="va">alpha</span><span class="op">/</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span>,</span>
+<span class="r-in">                signif<span class="op">=</span><span class="va">p</span><span class="op">&lt;</span><span class="va">alpha_adj</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  * testing differences between pairs of taxa along 5 slices using wilcox_p</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::mutate(., alpha_adj = alpha/n(), signif = p &lt; alpha_adj):</span> Problem while computing `alpha_adj = alpha/n()`.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `n()`:</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> could not find function "n"</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
